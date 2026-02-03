@@ -975,14 +975,33 @@ document.querySelectorAll('#offcanvas a[href]').forEach(a => {
       
 
 
-    
+    (() => {
+  const v = document.getElementById('bgVideo');
+  if (!v) return;
+
+  // Forza attributi/proprietà (Safari è pignolo)
+  v.muted = true;
+  v.playsInline = true;
+  v.setAttribute('muted', '');
+  v.setAttribute('playsinline', '');
+  v.setAttribute('autoplay', '');
+
+  const tryPlay = () => v.play().catch(()=>{});
+
+  // tenta al load
+  window.addEventListener('load', () => setTimeout(tryPlay, 80));
+
+  // fallback: se Safari blocca finché non c'è una gesture
+  const unlock = () => {
+    tryPlay();
+    window.removeEventListener('touchstart', unlock);
+    window.removeEventListener('click', unlock);
+  };
+  window.addEventListener('touchstart', unlock, { passive: true });
+  window.addEventListener('click', unlock, { passive: true });
+})();
     
 
-    /* ===== Reduce motion ===== */
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const vid = document.getElementById('bgVideo');
-    const handleMotion = () => { if(mediaQuery.matches){ vid.pause(); vid.removeAttribute('autoplay'); } };
-    mediaQuery.addEventListener('change', handleMotion); handleMotion();
 
     /* ===== Showcase interactions ===== */
     const vLeft = document.getElementById('hoverVideoLeft');
