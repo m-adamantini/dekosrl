@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Azienda – DEKO</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <style>
+
+
+@font-face {
+       font-family: 'din-2014';
+        src: url('assets/fonts/din-2014.otf') format('opentype');
+         font-weight: 400;
+         font-style: normal;
+      }
+
+
+:root{
+  --bg: #000000;
+  --text: #f1f1f1;
+  --muted: rgba(241, 241, 241, 0.893);
+  --line: rgba(241,241,241,.14);
+  --accent: #ff0000; 
+  --accent-2:#ff0000;          /* fallback */
+  --panel: #ff0000;
+  --panel2: #ffffff;
+  --panelText: #111111;
+  --header-h:100px;
+  --header-h-mobile:64px;
+
+  --max: 1200px;
+  --pad: clamp(18px, 4vw, 56px);
+  --radius: 18px;
+}
+
+    .btn{ --ring:rgba(245,172,0,.35); appearance:none; border:none; cursor:pointer; font-weight:700; letter-spacing:.02em; padding:14px 18px; border-radius:12px; transition:transform .15s ease, box-shadow .15s ease, background .2s ease, color .2s ease }
+    .btn-primary{ background:var(--accent); color:#ffffff }
+    .btn-primary:hover{ background:var(--accent-2); box-shadow:0 10px 30px var(--ring) }
+    .btn-ghost{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.22) }
+    .btn-ghost:hover{ background:rgba(255,255,255,.06) }
+
+
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; padding:0}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family:'din-2014', sans-serif;background:#000000;color:#f1f1f1;
+    }
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* HEADER */
+.site-header{
+  position:fixed;
+  inset:0 0 auto 0;
+  height:var(--header-h);
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 18px;
+  background:transparent;
+  border-bottom:0 solid rgba(255,255,255,.06);
+  transition:background .25s ease, transform .25s ease;
+  z-index:20001; /* >>> SEMPRE SOPRA ALLE CARD */
+}
+.site-header.scrolled{
+  background:rgba(0,0,0,.88);
+  border-bottom-color:rgba(255,255,255,.08);
+}
+.site-header.hidden{
+  transform:translateY(-100%);
+}
+
+.logo{
+  justify-self:center;
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+.logo img{
+  height:80px;
+  width:auto;
+  display:block;
+}
+
+.header-right{
+  justify-self:end;
+  position:relative;
+}
+
+/* MENU BUTTON */
+.menu-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  color:var(--text);
+}
+.menu-icon{
+  position:relative;
+  width:22px;
+  height:14px;
+}
+.menu-icon span{
+  position:absolute;
+  left:0;
+  height:2px;
+  background:currentColor;
+  border-radius:2px;
+}
+.menu-btn:hover .menu-icon span{
+  background:var(--hover-gray);
+}
+.menu-icon span:nth-child(1){ top:0; width:22px }
+.menu-icon span:nth-child(2){ top:6px; width:18px }
+.menu-icon span:nth-child(3){ top:12px; width:14px }
+
+/* BACKDROP */
+.menu-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+  z-index:20000;
+}
+.menu-backdrop.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* PANEL */
+.menu-panel{
+  position:fixed;
+  top:0;
+  right:0;
+  height:100vh;
+  width:clamp(820px,45vw,960px);
+  background:var(--panel);
+  color:#111;
+  transform:translateX(100%);
+  transition:transform .3s ease;
+  z-index:20002;
+}
+.menu-panel.open{
+  transform:translateX(0);
+}
+.menu-panel__inner{
+  padding:28px 28px 24px 32px;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+/* CLOSE */
+.menu-close{
+  margin-left:auto;
+  width:45px;
+  height:45px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+}
+.menu-close:hover svg{
+  stroke:#fff;
+}
+
+/* LINKS */
+.menu-list{
+  display:grid;
+  gap:10px;
+  margin:24px 0 0;
+  padding:0;
+  list-style:none;
+}
+.menu-list a{
+  display:block;
+  padding:10px 6px;
+  text-decoration:none;
+  color:#111;
+  font-weight:700;
+  letter-spacing:.02em;
+  font-size:1.2rem;
+}
+.menu-list a:hover{
+  color:#fff;
+}
+
+/* FOOT */
+.menu-foot{
+  margin-top:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:.95rem;
+}
+
+/* SUBMENU */
+.menu-item.has-sub .menu-sub{
+  display:none;
+}
+.menu-item.has-sub.open .menu-sub{
+  display:grid;
+  gap:6px;
+  list-style:none;
+  margin:4px 0 8px;
+  padding-left:14px;
+}
+.menu-subbtn{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 6px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  font-size:1.2rem;
+  font-weight:700;
+  color:#111;
+}
+.menu-subbtn:hover{ color:#fff; }
+.menu-subbtn .chev{
+  transition:transform .2s ease;
+}
+.menu-item.has-sub.open .menu-subbtn .chev{
+  transform:rotate(180deg);
+}
+.menu-sub a{
+  padding:8px 6px;
+  font-size:1.02rem;
+  font-weight:700;
+  color:rgba(17,17,17,.92);
+}
+.menu-sub a:hover{
+  color:#fff;
+}
+
+@media (max-width:960px){
+  .menu-panel{ width:100vw; }
+}
+
+/* HERO */
+.about-hero{
+  min-height: 72vh;
+  display: grid;
+  align-items: center;
+  padding: calc(var(--pad) * 1.2) var(--pad);
+}
+.hero-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+  width: 100%;
+}
+.hero-title{
+  width: min(520px, 100%);
+}
+.hero-kicker{
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 18px 0;
+}
+.hero-stacked{
+  margin: 0;
+  font-size: clamp(32px, 6vw, 66px);
+  line-height: 1.2;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.hero-stacked span{
+  display:block;
+  color: var(--accent);
+}
+.hero-sub{
+  margin: 18px 0 0 0;
+  color: var(--muted);
+  max-width: 44ch;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* HERO with video on the right */
+/* HERO full-bleed video */
+.about-hero.about-hero--video{
+  position: relative;
+  min-height: 72vh;
+  padding-right: 20vw;
+  overflow: hidden;
+}
+
+/* video dietro */
+.about-hero__video{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+/* overlay: nero 100% a sinistra -> 0% a destra */
+.about-hero__overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  /* 2 layer: uno “hard” a sinistra + uno leggero generale */
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgb(0, 0, 0) 30%,
+      rgba(0, 0, 0, 0.753) 50%,
+      rgba(0,0,0,0) 75%
+    ),
+    linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* contenuto sopra */
+.about-hero__content{
+  position: relative;
+  z-index: 2;
+
+  max-width: var(--max);
+  margin: 0 auto;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+
+
+  padding-right: 30vw;
+}
+
+/* testo: limita la larghezza come nel riferimento */
+.about-hero__content .hero-title{
+  width: min(520px, 92vw);
+}
+
+.about-hero__image__content{
+  position: relative;
+  z-index: 2;
+
+  max-width: var(--max);
+  margin: 0 auto;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+
+
+  padding-right: 30vw;
+}
+
+/* testo: limita la larghezza come nel riferimento */
+.about-hero__image__content .hero-title{
+  width: min(520px, 92vw);
+}
+
+
+
+/* SPLIT */
+.about-split{
+  padding: var(--pad);
+}
+.split-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr 1.25fr;
+  gap: clamp(22px, 4vw, 56px);
+  align-items: center;
+}
+.split-eyebrow{
+  margin: 0 0 14px 0;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .26em;
+  font-size: 12px;
+}
+.split-title{
+  margin: 0 0 18px 0;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.split-par{
+  margin: 0 0 14px 0;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 60ch;
+  font-size: 14px;
+}
+.split-cta{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  opacity: .92;
+}
+.split-cta:hover{ opacity: 1; }
+
+.split-media{
+  margin: 0;
+  overflow: hidden;
+  background: rgba(255,255,255,.04);
+  border: 0px solid rgba(255,255,255,.08);
+}
+.split-media img{
+  width: auto;
+  height: 60vh;
+  display:block;
+}
+
+/* CALLOUT (white band) */
+.about-callout{
+  background: var(--panel2);
+  color: var(--panelText);
+  padding: clamp(42px, 6vw, 80px) var(--pad);
+}
+.callout-inner{
+  max-width: 980px;
+  margin: 0 auto;
+  text-align: center;
+}
+.callout-title{
+  margin: 0;
+  font-size: clamp(26px, 3.2vw, 42px);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.callout-sub{
+  margin: 12px 0 0 0;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: 12px;
+  opacity: .75;
+}
+.callout-body{
+  margin: 26px auto 0 auto;
+  max-width: 78ch;
+  line-height: 1.9;
+  font-size: 14px;
+  opacity: .88;
+}
+.callout-btn{
+  margin-top: 26px;
+  display: inline-block;
+  padding: 12px 18px;
+  border: 1px solid rgba(0,0,0,.22);
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--panelText);
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.callout-btn:hover{
+  border-color: rgba(0,0,0,.5);
+}
+
+/* Callout dark (come Missione, ma nero + testo bianco) */
+.about-callout--dark{
+  background: var(--bg);
+  color: var(--text);
+}
+.about-callout--dark .callout-title,
+.about-callout--dark .callout-sub,
+.about-callout--dark .callout-body{
+  color: var(--text);
+}
+.about-callout--dark .callout-body{
+  opacity: .82; /* come il bianco ma sul nero */
+}
+
+/* WIDE HERO */
+.about-wide{
+  padding: var(--pad);
+}
+.wide-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-height: clamp(420px, 56vh, 620px);
+  border: 1px solid rgba(255,255,255,.10);
+}
+.wide-bg{
+  position:absolute;
+  inset:0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.02);
+}
+.wide-overlay{
+  position: relative;
+  z-index: 1;
+  width: min(540px, 92%);
+  height: 100%;
+  padding: clamp(26px, 4vw, 46px);
+  background: linear-gradient(90deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,0) 100%);
+}
+.wide-eyebrow{
+  margin: 0 0 14px 0;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .26em;
+  font-size: 12px;
+}
+.wide-title{
+  margin: 0 0 18px 0;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.wide-par{
+  margin: 0 0 14px 0;
+  color: var(--muted);
+  line-height: 1.85;
+  font-size: 14px;
+  max-width: 62ch;
+}
+
+/* TIMELINE */
+.about-timeline{
+  padding: calc(var(--pad) * 1.2) var(--pad);
+}
+.timeline-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+}
+.timeline-title{
+  text-align: center;
+  margin: 0 0 34px 0;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.timeline-block{
+  padding: 26px 0;
+  border-top: 1px solid var(--line);
+}
+.timeline-decade{
+  text-align: center;
+  color: var(--accent);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+.timeline-rows{
+  display: grid;
+  gap: 14px;
+}
+.timeline-row{
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 22px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.timeline-row:first-child{
+  border-top: 0;
+}
+.timeline-year{
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: .14em;
+}
+.timeline-text{
+  color: var(--text);
+  opacity: .92;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .split-inner{
+    grid-template-columns: 1fr;
+  }
+  .wide-overlay{
+    width: 100%;
+    background: linear-gradient(0deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,0) 100%);
+  }
+  .timeline-row{
+    grid-template-columns: 64px 1fr;
+  }
+}
+
+
+/* --- ABOUT: new sections add-on --- */
+
+.about-split--reverse .split-inner{
+  direction: rtl;
+}
+.about-split--reverse .split-text,
+.about-split--reverse .split-media{
+  direction: ltr;
+}
+
+/* Divisions */
+.about-divisions{
+  padding: var(--pad);
+}
+.divisions-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+}
+.divisions-head{
+  margin-bottom: 18px;
+}
+.divisions-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.division-card{
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  padding: clamp(18px, 3vw, 26px);
+}
+.division-title{
+  margin: 0 0 12px 0;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 14px;
+}
+.division-text{
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+/* Principles grid */
+.about-principles{
+  padding: calc(var(--pad) * 1.2) var(--pad);
+}
+.principles-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+}
+.principles-head{
+  margin-bottom: 22px;
+}
+.principles-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+@media (max-width: 900px){
+  .principles-grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px){
+  .principles-grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+.principle{
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  padding: clamp(18px, 3vw, 26px);
+}
+.principle-n{
+  color: var(--accent);
+  font-size: 12px;
+  letter-spacing: .22em;
+  margin-bottom: 12px;
+}
+.principle-t{
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-weight: 500;
+  font-size: 14px;
+}
+.principle-p{
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+/* Commitments (list) */
+.about-commitments{
+  padding: calc(var(--pad) * 1.1) var(--pad);
+}
+.commitments-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: clamp(22px, 4vw, 56px);
+  align-items: start;
+}
+
+.commitments-content{
+  padding-top: 6px;
+}
+
+/* Titolo come riferimento (più “hero”) */
+.commitments-head .split-title{
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: .14em;
+}
+
+/* Blocchi testo più “puliti” come screenshot */
+.commitments-list{
+  margin-top: 18px;
+  display: grid;
+  gap: 22px;
+}
+
+.commit{
+  padding: 0;
+  border-top: 0;
+}
+
+.commit-t{
+  margin: 0 0 10px 0;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.commit-p{
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.85;
+  font-size: 14px;
+  max-width: 90ch;
+}
+
+/* Immagine grande a destra */
+.commitments-media{
+  margin: 0;
+  overflow: hidden;
+  background: rgba(255,255,255,.04);
+  border: 0px solid rgba(255,255,255,.10);
+}
+
+.commitments-media img{
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Mobile: immagine sotto */
+@media (max-width: 900px){
+  .commitments-inner{ grid-template-columns: 1fr; }
+}
+
+
+/* ===== STORIA: hero full-bleed con immagine ===== */
+
+.about-hero--image{
+  position: relative;
+  min-height: 72vh;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* background image */
+.about-hero__bg{
+  position: absolute;
+  inset: 0;
+  margin-left: 20vw;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+/* overlay già usato nel video hero → riusato identico */
+.about-hero--image .about-hero__overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,1) 20%,
+      rgba(0,0,0,.9) 40%,
+      rgba(0, 0, 0, 0.50) 60%,
+      rgba(0,0,0,0) 75%
+    );
+}
+
+/* contenuto sovrapposto */
+.about-hero--image .about-hero__content{
+  position: relative;
+  z-index: 2;
+  min-height: 72vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-right: 40vw;
+}
+
+
+/* contenuto sovrapposto */
+.about-hero--image .about-hero__image__content{
+  position: relative;
+  z-index: 2;
+  min-height: 72vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-right: 40vw;
+}
+
+
+/* mobile */
+@media (max-width: 900px){
+  .about-hero--image{
+    min-height: 70vh;
+  }
+}
+
+
+
+
+@media (max-width: 1000px){
+
+
+    .about-hero__video{
+    object-position: 70% center;
+    /* 30% = più a sinistra
+       prova 25% / 35% se vuoi rifinire */
+  }
+
+
+
+  /* 2️⃣ Sposta il contenuto (CHI SIAMO) più in basso */
+  .about-hero__content{
+    align-items: flex-end;          /* invece di center */
+    padding-bottom: 182px;           /* quanto scende il testo */
+  }
+
+    /* 2️⃣ Sposta il contenuto (CHI SIAMO) più in basso */
+  .about-hero--image .about-hero__image__content{         /* invece di center */
+    padding-right: 30vw;
+  }
+}
+
+@media (max-width: 800px){
+  /* 2️⃣ Sposta il contenuto (CHI SIAMO) più in basso */
+  .about-hero--image .about-hero__image__content{         /* invece di center */
+    padding-right: 20vw;
+  }
+}
+
+@media (max-width: 700px){
+  /* 2️⃣ Sposta il contenuto (CHI SIAMO) più in basso */
+  .about-hero--image .about-hero__image__content{         /* invece di center */
+    padding-right: 8vw;
+  }
+}
+
+
+
+/* Telefoni piccoli: un filo più giù ancora */
+@media (max-width: 600px){
+
+  .about-hero__content{ height: auto; padding: 110px var(--pad) 56px; }
+  .about-hero__image__content{ height: auto; padding: 110px var(--pad) 56px; }
+  .about-hero.about-hero--video{ min-height: 70vh; }
+
+  .about-hero__overlay{
+    background:
+      linear-gradient(0deg,
+        rgba(0,0,0,.88) 0%,
+        rgba(0,0,0,.55) 45%,
+        rgba(0,0,0,0) 80%
+      );
+  }
+
+    .about-hero--image .about-hero__content{
+    padding: 100px var(--pad) 44px;
+  }
+      .about-hero--image .about-hero__image__content{
+    padding: 100px var(--pad) 44px;
+  }
+
+  /* se vuoi il testo ancora più leggibile */
+  .hero-stacked{ font-size: clamp(28px, 9vw, 48px); }
+  .hero-sub{ font-size: 13px; letter-spacing: .06em; }
+
+    /* 1️⃣ Sposta il video verso sinistra */
+  .about-hero__video{
+    object-position: 75% center;
+    /* 30% = più a sinistra
+       prova 25% / 35% se vuoi rifinire */
+  }
+
+  .about-hero__content{
+    padding-bottom: 0px;
+    padding: 350px var(--pad) 44px;
+
+  }
+
+    .about-hero__image__content{
+    padding-bottom: 0px;
+    padding: 350px var(--pad) 44px;
+
+  }
+
+  /* overlay già usato nel video hero → riusato identico */
+.about-hero--image .about-hero__overlay{
+
+  background:
+    linear-gradient(90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 20%,
+      rgba(0, 0, 0, 0) 40%,
+      rgba(0, 0, 0, 0) 60%,
+      rgba(0,0,0,0) 75%
+    );
+}
+
+/* background image */
+.about-hero__bg{
+  margin-left: 0vw;
+}
+
+.split-par{
+  line-height: 1.4;
+  font-size: 14px;
+  text-shadow:
+  0 1px 2px rgba(0, 0, 0, 0.539),
+  0 0 6px rgba(0, 0, 0, 0.562);
+}
+
+}
+
+
+
+    /* ===== FOOTER FULL SCREEN ===== */
+    .site-footer{ background:#000; color:var(--text); min-height:60vh; display:flex; }
+    .footer-wrap{
+      max-width:2200px; margin:0 auto; width:100%;
+      padding:72px min(4vw,32px) 28px;
+      display:grid;
+      grid-template-rows: auto auto auto 1fr auto;
+      row-gap: 40px;
+    }
+
+
+  @media (max-width: 640px){
+    .footer-wrap{
+      padding:0px min(0vw,0px) 0px;
+    }
+  }
+
+    /* Titolo grande (riusato nella CTA servizi) */
+    .footer-hero{ text-align:left; }
+    .footer-hero-title{
+      font-size: clamp(36px, 4.5vw, 60px);
+      letter-spacing:.08em;
+      font-weight:800;
+      margin:0 0 10px;
+    }
+    .footer-hero-title .brand{ color:var(--accent); }
+    .title-underline{
+      width:120px; height:4px; background:var(--accent);
+      margin-top:10px; border-radius:4px;
+    }
+
+    /* Servizi (riutilizzato nella CTA) */
+    .svc-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:60px;
+      padding:60px 0 40px;
+    }
+    .svc-item h3{ margin:.5rem 0 .5rem; font-size:1.15rem; letter-spacing:.03em }
+    .svc-item p{ color:var(--muted); margin:0 0 1rem }
+    .svc-link{ font-weight:700; border-bottom:0px solid rgba(255,255,255,.25); padding-bottom:2px; color: red;}
+    .svc-ico{ width:32px; height:32px; color:var(--accent); display:flex; align-items:center; justify-content:center; margin-bottom:4px }
+
+    /* Separatore con logo grande sopra la linea */
+    .footer-sep{ position:relative; height:350px; margin:12px 0 12px; }
+    .footer-sep .sep-line{
+      position:absolute; left:0; right:0; top:68px;
+      height:2px; background:rgb(255, 0, 0);
+    }
+    .footer-logo{
+      position:absolute; left:50%; top:40%; transform:translateX(-50%);
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#000; padding:10px 18px;
+      border:0px solid rgba(255,255,255,.18);
+      border-radius:999px;
+    }
+    .footer-logo img{ height:110px; width:auto; display:block }
+
+    /* Parte bassa */
+    .footer-main{
+      display:grid; grid-template-columns: minmax(280px, 1.2fr) 2fr; gap:64px; align-items:start; margin-top: 100px;
+    }
+
+
+    .nl-title{ font-size:clamp(28px,3.5vw,44px); line-height:1.05; margin:0 0 10px }
+    .nl-title span{ color:var(--accent) }
+    .newsletter p{ color:var(--muted); margin:0 0 16px }
+    .nl-form{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+    .nl-form input{
+      flex:1 1 260px; min-width:240px;
+      background:#0f0f0f; border:1px solid rgba(255,255,255,.18); color:#fff;
+      padding:12px 14px; border-radius:10px;
+    }
+    .nl-form .nl-msg{ display:block; margin-top:8px; color:var(--muted) }
+    .socials{ display:flex; gap:10px; margin-top:18px }
+    .sbtn{ width:36px; height:36px; border:1px solid rgba(255,255,255,.18); border-radius:999px; display:flex; align-items:center; justify-content:center; color:#fff }
+    .sbtn:hover{ border-color:var(--accent); color:var(--accent) }
+
+    .footer-cols{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px }
+    .footer-cols .col h4{ color:var(--accent); font-size:.95rem; letter-spacing:.1em; margin:0 0 8px }
+    .footer-cols .col ul{ list-style:none; margin:0; padding:0 }
+    .footer-cols .col li{ margin:.45rem 0 }
+    .footer-cols .col a{ color:#cfcfcf }
+    .footer-cols .col a:hover{ color:#fff }
+
+    /* Barra legale */
+    .legal{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:24px; border-top:1px solid rgba(255,255,255,.12) }
+    .legal-text{
+  font-size:.9rem;
+  color:#cfcfcf;
+  line-height:1.5;
+}
+
+.legal-text p{
+  margin:0;
+  text-decoration:none;
+}
+    .legal-links{ display:flex; gap:20px; list-style:none; margin: 0; padding:0 }
+    .legal-links a{ color:#cfcfcf; font-size:.9rem }
+    .country{ display:flex; align-items:center; gap:6px; color:#cfcfcf; font-size:.9rem }
+
+    /* Responsive footer */
+    @media (max-width: 1024px){
+      .svc-grid{ grid-template-columns:1fr; gap:40px; padding:40px 0 }
+      .footer-main{ grid-template-columns:1fr; gap:40px }
+      .footer-cols{ grid-template-columns:repeat(2,1fr) }
+      .footer-sep .sep-line{ top:72px }
+      .footer-logo img{ height:74px }
+    }
+    @media (max-width: 640px){
+
+      .footer-wrap{ padding-left:16px; padding-right:16px }
+      .footer-main{ margin-top: 20px; }
+    }
+
+    /* ===== LIGHTBOX NEWS ===== */
+.news-card img{ cursor: zoom-in; }
+
+.lightbox{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.85);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index: 99999;
+  padding: 24px;
+}
+.lightbox.open{ display:flex; }
+
+.lightbox img{
+  max-width: 96vw;
+  max-height: 92vh;
+  object-fit: contain;
+  cursor: zoom-out;
+}
+
+.lightbox .close{
+  position:absolute;
+  top: 14px; right: 14px;
+  width: 44px; height: 44px;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.footer-partners{
+  position:absolute;
+  left:50%;
+  top:90%;                  /* regola se vuoi più su/giù */
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:200px;                 /* “aria” tra i loghi */
+  width:90vw;   /* mantiene equidistanza */
+  padding:0 12px;
+  z-index:2;
+}
+
+.footer-partners img{
+  height:120px;              /* dimensione coerente */
+  width:auto;
+  opacity:.95;
+  filter:none;
+}
+
+.sbtn svg{
+  width:30px;
+  height:30px;
+  display:block;
+}
+
+@media (max-width: 1554px){
+  .footer-partners{
+    gap:100px;
+    justify-content:center;
+  }
+  .footer-partners img{ height:100px; }
+}
+
+@media (max-width: 1024px){
+  .footer-partners{
+    gap:50px;
+    justify-content:center;
+  }
+  .footer-partners img{ height:70px; }
+}
+
+
+@media (max-width: 640px){
+  .footer-partners{
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:22px 30px;
+    top:75%;
+  }
+   .footer-partners img{ height:50px; }
+}
+  </style>
+  </head>
+
+
+
+<!-- ABOUT + TIMELINE PAGE -->
+<body>
+    <!-- ===================== HEADER ===================== -->
+  <header class="site-header" role="banner">
+    <div></div>
+    <a href="home.html" class="logo" aria-label="Homepage">
+      <img src="assets/logo.png" alt="Deko Vernici" />
+    </a>
+    <div class="header-right">
+      <button class="menu-btn" id="menuBtn" aria-label="Apri menu" aria-haspopup="true" aria-expanded="false" aria-controls="offcanvas">
+        <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+
+      <div class="menu-backdrop" id="backdrop" hidden></div>
+      <aside id="offcanvas" class="menu-panel" aria-hidden="true" role="dialog" aria-label="Menu principale">
+        <div class="menu-panel__inner">
+          <button class="menu-close" id="menuClose" aria-label="Chiudi">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+
+          <ul class="menu-list">
+            <li><a href="azienda.html">Azienda</a></li>
+
+            <li class="menu-item has-sub">
+              <button class="menu-subbtn" type="button" data-sub aria-expanded="false">
+                Applicazioni
+                <span class="chev" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                </span>
+              </button>
+
+              <ul class="menu-sub">
+                <li><a href="home.html#epsygel">Epsygel</a></li>
+                <li><a href="home.html#spruzzo">Applicazione a spruzzo</a></li>
+                <li><a href="home.html#rullo">Applicazione a rullo</a></li>
+                <li><a href="home.html#industry">Linea Industriale</a></li>
+              </ul>
+            </li>
+
+            <li class="menu-item has-sub">
+              <button class="menu-subbtn" type="button" data-sub aria-expanded="false">
+                Qualità e Ambiente
+                <span class="chev" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                </span>
+              </button>
+
+              <ul class="menu-sub">
+    <li><a href="assets/documents/PARTE-GENERALE-MOGC-231-03012026.pdf">Politiche - Parte Generale</a></li>
+    <li><a href="assets/documents/S52.01-Politica-Aziendale-rev-2-ITA.pdf">Politica Aziendale</a></li>
+    <li><a href="assets/documents/Codice-Etico-REV-2_Ita-Cerved.pdf">Politica Etica</a></li>
+    <li><a href="assets/documents/Certificato-ISO-9001-n.-10000512291-MSC-ACCREDIA-ITA-12-03-2025-ITA.pdf">Certificazione ISO-9001</a></li>
+    <li><a href="assets/documents/Cerificato-ISO-14001-n.-C704707-11-04-2025-ITA.pdf">Certificazione ISO-14001</a></li>
+              </ul>
+            </li>
+
+            <li><a href="contatti.html">Contatti</a></li>
+          </ul>
+
+          <div class="menu-foot">
+            <ul class="menu-list">
+              <li>
+                <a href="azienda-en.html">English
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"/>
+                    <path d="M13 6l6 6-6 6"/>
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+  <!-- HERO -->
+<header class="about-hero about-hero--video">
+  <video
+    class="about-hero__video"
+    src="video/azienda.mp4"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="metadata"
+  ></video>
+
+  <!-- overlay: nero a sinistra -> trasparente a destra -->
+  <div class="about-hero__overlay" aria-hidden="true"></div>
+
+  <!-- contenuto sopra -->
+  <div class="about-hero__content">
+    <div class="hero-title">
+      <p class="hero-kicker">LA STORIA DI DEKO</p>
+      <h1 class="hero-stacked">
+        <span>CHI</span>
+        <span>SIAMO</span>
+      </h1>
+      <p class="hero-sub">Competenza, qualità e innovazione nei rivestimenti.</p>
+    </div>
+  </div>
+</header>
+
+  <!-- SPLIT 01: Chi siamo (intro) -->
+<section class="about-callout about-callout--dark" id="chi-siamo-intro">
+  <div class="callout-inner">
+    <h2 class="callout-title">RIVESTIMENTI CHE ALZANO LO STANDARD</h2>
+
+    <p class="callout-body">
+      Deko è una società costantemente impegnata nella realizzazione dei migliori rivestimenti,
+      unendo competenza tecnica, controllo qualità e spinta all’innovazione.
+    </p>
+
+    <p class="callout-body">
+      Con <strong>DEKO COOKWARE</strong> e <strong>DEKO INDUSTRY</strong> operiamo a livello B2B,
+      creando soluzioni applicabili nel cookware e in molteplici settori industriali.
+    </p>
+  </div>
+</section>
+
+
+
+  <!-- NEW: Impegni (5 items) -->
+<section class="about-commitments" id="impegno">
+  <div class="commitments-inner">
+
+    <div class="commitments-content">
+      <div class="commitments-head">
+        <p class="split-eyebrow">IMPEGNI</p>
+        <h2 class="split-title">COSA FACCIAMO, NELLA PRATICA</h2>
+      </div>
+
+      <div class="commitments-list">
+        <article class="commit">
+          <h3 class="commit-t">VERNICI SICURE</h3>
+          <p class="commit-p">
+            Rivestimenti privi di PFOA e GenX. Fornitori qualificati e conformità alle regolamentazioni food contact.
+            Nel cookware, formulazioni prive di metalli pesanti come cadmio e nichel.
+          </p>
+        </article>
+
+        <article class="commit">
+          <h3 class="commit-t">VERNICI PERFORMANTI</h3>
+          <p class="commit-p">
+            Collaboriamo con chimici di alto profilo e sottoponiamo i prodotti ai test più rigorosi,
+            puntando alle performance più elevate del mercato.
+          </p>
+        </article>
+
+        <article class="commit">
+          <h3 class="commit-t">VERNICI INNOVATIVE</h3>
+          <p class="commit-p">
+            Linee a base acqua: vantaggi ambientali e operativi. Pulizia impianti con ridotta quantità d’acqua,
+            senza solventi, e basso impatto grazie al ridotto tasso di VOC.
+          </p>
+        </article>
+
+        <article class="commit">
+          <h3 class="commit-t">WELFARE AZIENDALE</h3>
+          <p class="commit-p">
+            Formazione continua, crescita professionale e ambienti di lavoro sicuri.
+            Condizioni eque lungo la filiera e cura reale delle persone.
+          </p>
+        </article>
+
+        <article class="commit">
+          <h3 class="commit-t">PRODUZIONE RESPONSABILE</h3>
+          <p class="commit-p">
+            Produzione pulita e riduzione sprechi. Investimenti mirati per minimizzare l’impatto ambientale:
+            le morchie, già oggi, rasentano lo zero.
+          </p>
+        </article>
+      </div>
+    </div>
+
+    <!-- QUI mettiamo la foto che prima stava nello split 01 -->
+    <figure class="commitments-media">
+      <img src="assets/Cookware_q.jpg" alt="Deko - laboratorio e produzione (placeholder)">
+    </figure>
+
+  </div>
+</section>
+
+
+  <!-- CALLOUT: Missione -->
+  <section class="about-callout" id="missione">
+    <div class="callout-inner">
+      <h2 class="callout-title">LA NOSTRA MISSIONE</h2>
+      <p class="callout-sub">KNOW-HOW • PERFORMANCE • RESPONSABILITÀ</p>
+
+      <p class="callout-body">
+        Portare il know-how italiano, maturato in 40 anni di esperienza e ricerca,
+        al consumatore di tutto il mondo, offrendo rivestimenti tra i più performanti e sicuri sul mercato.
+      </p>
+
+      <p class="callout-body">
+        Creare prodotti di qualità, <strong>100% italiani</strong>, attraverso una produzione responsabile
+        verso il consumatore, i collaboratori e l’ambiente.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- SPLIT 02: Metodo -->
+  <section class="about-split about-split--reverse" id="metodo">
+    <div class="split-inner">
+      <div class="split-text">
+        <p class="split-eyebrow">METODO</p>
+        <h2 class="split-title">COME CI RIUSCIAMO</h2>
+
+        <p class="split-par">
+          Sottoponiamo le nostre vernici ai test più rigidi e ampliamo costantemente il reparto di ricerca e sviluppo.
+        </p>
+
+        <p class="split-par">
+          Investiamo sulle competenze dei nostri collaboratori e offriamo un servizio di consulenza mirato,
+          competente e orientato ai risultati.
+        </p>
+
+      </div>
+
+      <figure class="split-media">
+        <img src="assets/ricerca.png" alt="Deko - test e ricerca (placeholder)">
+      </figure>
+    </div>
+  </section>
+
+  <!-- NEW: 6 PRINCIPI -->
+  <section class="about-principles" id="principi">
+    <div class="principles-inner">
+      <div class="principles-head">
+        <p class="split-eyebrow">RESPONSABILITÀ</p>
+        <h2 class="split-title">SICUREZZA, AMBIENTE, AFFIDABILITÀ</h2>
+        <p class="split-par">
+          Lavoriamo con fornitori di fiducia, standard elevati e verifiche continue: Le nostre priorità sono la sicurezza dei collaboratori e il rispetto dell’ambiente, per offrire ai clienti rivestimenti sicuri e performanti.
+        </p>
+      </div>
+
+      <div class="principles-grid">
+        <article class="principle">
+          <div class="principle-n">01</div>
+          <h3 class="principle-t">INNOVAZIONE</h3>
+          <p class="principle-p">
+            Investiamo in ricerca per creare vernici 100% Made in Italy ad alte performance,
+            nel rispetto dell’ambiente.
+          </p>
+        </article>
+
+        <article class="principle">
+          <div class="principle-n">02</div>
+          <h3 class="principle-t">FLESSIBILITÀ</h3>
+          <p class="principle-p">
+            Rispondiamo con velocità e precisione. Operiamo con approccio sartoriale,
+            proponendo soluzioni su misura.
+          </p>
+        </article>
+
+        <article class="principle">
+          <div class="principle-n">03</div>
+          <h3 class="principle-t">COMUNICAZIONE</h3>
+          <p class="principle-p">
+            Il cliente definisce il prodotto insieme a tecnici preparati,
+            con assistenza completa anche nel post-vendita.
+          </p>
+        </article>
+
+        <article class="principle">
+          <div class="principle-n">04</div>
+          <h3 class="principle-t">EXPERTISE</h3>
+          <p class="principle-p">
+            Quarant’anni di esperienza, uniti a un approccio customer-centric,
+            per rispondere anche alle richieste più complesse.
+          </p>
+        </article>
+
+        <article class="principle">
+          <div class="principle-n">05</div>
+          <h3 class="principle-t">TEAM</h3>
+          <p class="principle-p">
+            Investiamo continuamente in formazione e aggiornamento:
+            le persone sono la risorsa più preziosa.
+          </p>
+        </article>
+
+        <article class="principle">
+          <div class="principle-n">06</div>
+          <h3 class="principle-t">CUSTOMER CENTRIC</h3>
+          <p class="principle-p">
+            Comprendiamo le esigenze e sviluppiamo prodotti tecnologicamente avanzati,
+            bilanciando performance e competitività.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+<section class="about-hero about-hero--image" id="storia">
+
+  <!-- immagine full width -->
+  <div
+    class="about-hero__bg"
+    style="background-image:url('assets/azienda.png');"
+    aria-hidden="true">
+  </div>
+
+  <!-- overlay nero sinistra → trasparente destra -->
+  <div class="about-hero__overlay" aria-hidden="true"></div>
+
+  <!-- contenuto sovrapposto -->
+  <div class="about-hero__image__content">
+    <div class="hero-title">
+      <p class="hero-kicker">LE ORIGINI</p>
+
+      <h2 class="hero-stacked">
+        <span>UNA STORIA</span>
+        <span>DI TALENTO</span>
+      </h2>
+
+      <p class="split-par" style="margin-top:22px; max-width:52ch;">
+        Ingegno, know-how e curiosità: sono i tratti distintivi di Pierino Brunelli, fondatore e anima di Deko Srl. Perito chimico classe 1951, con forte spirito imprenditoriale, ha maturato un’esperienza quarantennale nello sviluppo di vernici antiaderenti per il cookware.
+
+Nel 1994, con l’invenzione della carteggiatrice, rivoluziona il processo di carteggiatura: riduce quasi completamente l’inquinamento e raddoppia la produttività.
+
+Nel 2004 fonda Deko. Da quel momento, facendo tesoro del know-how e dell’expertise trasmessa al team, l’azienda si afferma in pochi anni tra i leader mondiali nei rivestimenti antiaderenti per cookware e in molteplici applicazioni industriali.
+      </p>
+    </div>
+  </div>
+
+</section>
+
+
+  <!-- TIMELINE (date le inserisci tu) -->
+  <section class="about-timeline" id="timeline">
+    <div class="timeline-inner">
+      <h2 class="timeline-title">TIMELINE</h2>
+
+      <!-- blocchi decade: li compili tu -->
+      <div class="timeline-block">
+        <div class="timeline-decade">LAMBDA</div>
+        <div class="timeline-rows">
+            <article class="timeline-row">
+            <div class="timeline-year">1983</div>
+            <div class="timeline-text">La storia di Deko inizia nel 1983 quando Pierino Brunelli comincia la prodzione del Non-Stick Coating.</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">1986</div>
+            <div class="timeline-text">Pierino Brunelli fonda Lambda, azienda focalizzata sull'innovazione di metodi e materiali in ambito vernici per il settore cookware. Lambda diviene in poco tempo uno dei leader mondiali tra i produttori di Non-Stick con una produzione di 4000 tonnellate all'anno di vernici.</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">1999</div>
+            <div class="timeline-text">Lambda viene acquistata da Akzo Nobel.</div>
+          </article>
+        </div>
+        <div class="timeline-decade">DEKO</div>
+        <div class="timeline-rows">
+          <article class="timeline-row">
+            <div class="timeline-year">2004</div>
+            <div class="timeline-text">Pierino Brunelli deicde di fondare una nuova realta: nasce Deko Srl, un piccolo stabile nella campagna piacentina.</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">2009</div>
+            <div class="timeline-text">Deko Srl ha la necessità di trasferirsi in una location più ampia, poichè l'attività cresce costantemente. L'azienda, dunque, si sposta in uno stabile di 1700 mq a Senna Lodigiana, dove si trova tutt'ora.</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">2016</div>
+            <div class="timeline-text">Grazie alla continua ricerca e al team di chimici, Deko Srl acquisice grossi clienti italiani ed esteri, guadagnando sempre piu un respiro internazionale. Nel 2016 l'azienda espande la sua metratura di produzione arrivando a 4400 mq, raddoppiando anche lo spazio dedicato ai laboratori per continuare a svolgere attività di ricerca..</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">2018</div>
+            <div class="timeline-text">Equilybra Holding Italiana acquisice il controllo di Deko, potenziandone la struttura.</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">2020</div>
+            <div class="timeline-text">L'azienda ha effettuato nuovi investimenti in ambito produttivo, implementazione catalogo prodotti e ha deciso di rinnovare la sua strategia di marca.</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">2021</div>
+            <div class="timeline-text">Deko acquisice nuovi importanti clienti in America Centrale e Sud America.</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">2022</div>
+            <div class="timeline-text">Un nuovo edificio viene costruito, espandendo l'area a 10000 mq. di cui 5200 occupati. inoltre Deko ottiene la certificazione ISO 9001:2015.</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">2023</div>
+            <div class="timeline-text">Viene istituito Deko Brasile a Bento Gonçalves (RS).</div>
+          </article>
+          <article class="timeline-row">
+            <div class="timeline-year">2025</div>
+            <div class="timeline-text">Viene istituita una nuova sede in Alessandria d' Egitto.</div>
+          </article>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    /* ===== Off-canvas controls ===== */
+    (function(){
+  const btn = document.getElementById('menuBtn');
+  const panel = document.getElementById('offcanvas');
+  const closeBtn = document.getElementById('menuClose');
+  const backdrop = document.getElementById('backdrop');
+  const header = document.querySelector('.site-header');
+
+  if(!btn || !panel || !closeBtn || !backdrop || !header) return;
+
+  /* SUBMENU */
+  document.querySelectorAll('[data-sub]').forEach(b=>{
+    b.addEventListener('click',e=>{
+      e.preventDefault();
+      const li = b.closest('.menu-item.has-sub');
+      const open = li.classList.contains('open');
+      li.classList.toggle('open',!open);
+      b.setAttribute('aria-expanded',String(!open));
+    });
+  });
+
+  function openMenu(){
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+    backdrop.hidden=false;
+    document.body.style.overflow='hidden';
+  }
+
+  function closeMenu(){
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+    setTimeout(()=>backdrop.hidden=true,250);
+    document.body.style.overflow='';
+  }
+
+  btn.addEventListener('click',()=>{
+    panel.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  closeBtn.addEventListener('click',closeMenu);
+  backdrop.addEventListener('click',closeMenu);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape') closeMenu();
+  });
+
+  /* CLOSE MENU ON LINK CLICK */
+  document.querySelectorAll('#offcanvas a[href]').forEach(a=>{
+    a.addEventListener('click',()=>{
+      document.querySelectorAll('.menu-item.has-sub.open').forEach(li=>{
+        li.classList.remove('open');
+      });
+      closeMenu();
+    });
+  });
+
+  /* HEADER SCROLL */
+  let lastY=window.scrollY, ticking=false;
+  function onScroll(){
+    const y=window.scrollY;
+    if(y>4) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+    if(y>lastY && y>120) header.classList.add('hidden');
+    else header.classList.remove('hidden');
+    lastY=y;
+    ticking=false;
+  }
+  window.addEventListener('scroll',()=>{
+    if(!ticking){
+      requestAnimationFrame(onScroll);
+      ticking=true;
+    }
+  },{passive:true});
+})();
+    </script>
+
+
+
+  <!-- ===== FOOTER FULL SCREEN (parte DAL LOGO in giù) ===== -->
+  <footer class="site-footer" id="footer">
+    <div class="footer-wrap">
+      <!-- Separatore con logo grande SOPRA alla linea -->
+      <div class="footer-sep">
+        <span class="footer-logo">
+          <img src="assets/logo.png" alt="Deko Vernici">
+        </span>
+
+        <div class="footer-partners" aria-label="Partner">
+        <img src="assets/partners/logo1.png" alt="Partner 1">
+        <img src="assets/partners/logo2.png" alt="Partner 2">
+        <img src="assets/partners/logo3.png" alt="Partner 3">
+        <img src="assets/partners/logo4.jpg" alt="Partner 4">
+        </div>
+
+        <span class="sep-line" aria-hidden="true"></span>
+      </div>
+
+      <!-- Parte bassa: newsletter + colonne -->
+      <section class="footer-main">
+        <div class="newsletter">
+          <h3 class="nl-title"><span>NON PERDERE</span><br/>LE NOVITÀ</h3>
+          <p>Iscriviti alla newsletter per ricevere aggiornamenti su prodotti ed eventi.</p>
+          <form class="nl-form" id="nlForm">
+            <input type="email" required placeholder="La tua email" aria-label="Email" />
+            <button type="submit" class="btn btn-primary">TIENIMI INFORMATO</button>
+            <small class="nl-msg" aria-live="polite"></small>
+          </form>
+          <div class="socials" aria-label="Social">
+            <a href="https://www.instagram.com/deko.srl/" aria-label="Instagram" class="sbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.3"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>
+            </a>
+<a href="https://it.linkedin.com/company/deko-srl/" aria-label="LinkedIn" class="sbtn">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path fill="currentColor" d="M4.98 3.5c0 1.38-1.11 2.5-2.48 2.5S0 4.88 0 3.5 1.11 1 2.48 1c1.38 0 2.5 1.12 2.5 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V23h-4v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.77 1.87-2.77 3.8V23h-4V8.5z"/>
+  </svg>
+</a>
+            <a href="https://www.youtube.com/@dekononstick9061/featured/" aria-label="YouTube" class="sbtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.5a4 4 0 0 0-3-3C17.8 4 12 4 12 4s-5.8 0-8 .5a4 4 0 0 0-3 3A41 41 0 0 0 1 12a41 41 0 0 0 0 4.5 4 4 0 0 0 3 3c2.2.5 8 .5 8 .5s5.8 0 8-.5a4 4 0 0 0 3-3A41 41 0 0 0 23 12a41 41 0 0 0 0-4.5zM10 15V9l6 3-6 3z"/></svg>
+            </a>
+
+            
+          </div>
+        </div>
+
+        <nav class="footer-cols" aria-label="Link utili">
+          <div class="col">
+            <h4>APPLICAZIONI</h4>
+            <ul>
+              <li><a href="home.html#epsygel">Epsygel</a></li>
+              <li><a href="home.html#spruzzo">Applicazione a spruzzo</a></li>
+              <li><a href="home.html#rullo">Applicazione a rullo</a></li>
+              <li><a href="home.html#industry">Industriale</a></li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4>INFORMAZIONI</h4>
+            <ul>
+              <li><a href="azienda.html">Chi siamo</a></li>
+              <li><a href="contatti.html">Lavora con noi</a></li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4>SERVIZI</h4>
+            <ul>
+              <li><a href="https://www.deko-kustom.com/">Deko Kustom</a></li>
+              <li><a href="assets/documents/Cat-26.pdf">Download cataloghi</a></li>
+            </ul>
+          </div>
+        </nav>
+      </section>
+
+      <!-- Barra legale -->
+      <div class="legal">
+        <div class="legal-text">
+  <p>© 2026 - DEKO Srl - P.I. 04291320960 - C.F. 04291320960</p>
+  <p>Capitale sociale interamente versato 1.mil</p>
+  <p>REA MI - 1992102</p>
+</div>
+        <ul class="legal-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+        </ul>
+        <div class="country">
+          <ul class="legal-links">
+          <li><a href="azienda-en.html">English<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 12h14"/>
+  <path d="M13 6l6 6-6 6"/>
+</svg></a></li>
+        </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
+
+
+
+
