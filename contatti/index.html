@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/header.css">
+  <link rel="stylesheet" href="/assets/css/footer.css">
+  <link rel="stylesheet" href="/assets/css/contatti.css">
+  <link rel="stylesheet" href="/assets/css/silktide-consent-manager.css">
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contatti – DEKO</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+</head>
+
+<body class="about-page">
+
+  <div id="site-header"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <header class="page-hero" id="top">
+    <div class="page-hero__bg" aria-hidden="true"></div>
+    <div class="page-hero__overlay" aria-hidden="true"></div>
+
+    <div class="page-hero__inner">
+      <p class="hero-kicker">DEKO SRL</p>
+      <h1 class="hero-stacked">
+        <span> </span>
+        <span class="accent">CONTATTI</span>
+      </h1>
+      <p class="hero-sub">
+        Qui trovi i canali diretti.
+      </p>
+    </div>
+  </header>
+
+  <!-- ===================== CONTATTI + CANDIDATURA ===================== -->
+  <section class="section" id="contatti">
+    <div class="section-inner">
+
+      <!-- Left column: info contatti -->
+      <div>
+        <p class="split-eyebrow">DOVE SIAMO</p>
+        <h2 class="split-title">INDIRIZZO, TELEFONO, EMAIL</h2>
+        <p class="split-par">
+           
+        </p>
+
+        <div class="contact-cards">
+          <div class="contact-card">
+            <h3>INDIRIZZO</h3>
+            <p>
+              Sp 126, VII Km 3<br/>
+              26856 Senna Lodigiana (LO) — Italia
+            </p>
+          </div>
+
+          <div class="contact-card">
+            <h3>TELEFONO</h3>
+            <p>
+              <a href="tel:+390377413190 ">+39 0377 413190</a><br/>
+              Lun–Mer • 08:00–17:30 </p>
+            <p>  Gio • 08:00–16:30 </p>
+            <p>  Ven • 08:00–12:30
+            </p>
+          </div>
+
+          <div class="contact-card">
+            <h3>EMAIL</h3>
+            <p>
+              Generale: <a href="mailto:customerservice@dekosrl.com">customerservice@dekosrl.com</a><br/>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: form candidatura -->
+      <div class="form-panel" id="candidatura">
+        <p class="split-eyebrow">LAVORA CON NOI</p>
+        <h2 class="split-title">INVIA LA TUA CANDIDATURA</h2>
+        <p class="split-par">
+          Compila i campi, scegli il ruolo e allega il curriculum. Ti ricontattiamo appena possibile.
+        </p>
+
+        <form id="jobForm" enctype="multipart/form-data">
+          <div class="form-grid">
+            <div>
+              <label for="nome">Nome</label>
+              <input class="field" id="nome" name="nome" type="text" required autocomplete="given-name" />
+            </div>
+
+            <div>
+              <label for="cognome">Cognome</label>
+              <input class="field" id="cognome" name="cognome" type="text" required autocomplete="family-name" />
+            </div>
+
+            <div>
+              <label for="email">Email</label>
+              <input class="field" id="email" name="email" type="email" required autocomplete="email" />
+            </div>
+
+            <div>
+              <label for="telefono">Telefono</label>
+              <input class="field" id="telefono" name="telefono" type="tel" autocomplete="tel" />
+            </div>
+          </div>
+
+          <div style="margin-top:14px;">
+            <label for="ruolo">Ruolo / Destinazione</label>
+            <select class="field" id="ruolo" name="ruolo" required>
+              <option value="" selected disabled>Seleziona un reparto</option>
+              <option value="amministrazione">Amministrazione</option>
+              <option value="produzione">Produzione</option>
+              <option value="laboratorio">Laboratorio</option>
+              <option value="commerciale">Commerciale</option>
+              <option value="sede_estera">Curriculum per sede estera</option>
+            </select>
+          </div>
+
+          <div style="margin-top:14px;">
+            <label for="messaggio">Messaggio</label>
+            <textarea class="field" id="messaggio" name="messaggio" placeholder="Raccontaci in breve chi sei e cosa cerchi." required></textarea>
+          </div>
+
+          <div style="margin-top:14px;">
+            <label for="cv">Curriculum (PDF, DOC, DOCX)</label>
+            <input class="field" id="cv" name="cv" type="file" accept=".pdf,.doc,.docx" required />
+            <div class="help">Max: 10MB.</div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">INVIA CANDIDATURA</button>
+            <button type="reset" class="btn btn-ghost">RESET</button>
+            <span class="form-status" id="jobStatus" aria-live="polite"></span>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+
+<div id="site-footer"></div>
+
+<script defer src="/assets/js/silktide-consent-manager.js"></script>
+<script defer src="/assets/js/consent-config.js"></script>
+<script defer src="/assets/js/main.js"></script>
+<script defer src="/assets/js/contatti.js"></script>
+
+
+</body>
+</html>

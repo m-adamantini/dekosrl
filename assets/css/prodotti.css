@@ -1,0 +1,438 @@
+   .hero-block { height: 100vh; position:relative; z-index:0;}
+    main { margin-top: calc(var(--limit) * -1); }
+
+    .stage{ position:sticky; top:0; height:var(--h); width:100%; overflow:hidden; background:#000; will-change:height; z-index:0;}
+    .stage img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; will-change:transform; transform-origin:center top; transform: translateY(var(--ty)) scale(var(--scale)); }
+
+    .stage::after{ display:none !important; }
+    .stage .heroImg{ position:absolute; z-index:0; transition:opacity 2s ease;}
+    
+    main{max-width:960px; margin:80px auto; padding:0 20px; line-height:1.6;}
+
+    :root{
+      --card-h: 480px;
+      --card-h-active: 530px;
+      --card-w: 380px;
+      --card-gap: 23px;
+      --card-overlap: calc(var(--card-h) * 0.5);
+      --card-radius: 2px;
+      --card-ease: 0.9s cubic-bezier(.65,0,.35,1);
+      --card-easefast: .25s cubic-bezier(.2,.7,.2,1);
+      --card-easeslow: 1.8s cubic-bezier(.65,0,.35,1);
+      --card-easemid: 1.2s cubic-bezier(.25,.1,.25,1);
+      --gutter: 0px;
+      --lift: calc(var(--card-h) * 0.12);
+      --headroom: calc((var(--card-h-active) - var(--card-h)) * .60);
+      --limit: 0px;   /* ~0.55 * vh in px, impostata da JS */
+      --scale: 1.15;  /* zoom iniziale (→ 1.00) */
+      --ty: 0px;      /* offset verticale opzionale */
+      --h: 100vh;     /* altezza hero, aggiornata da JS */
+      --min: 90vh;    /* altezza finale desiderata */
+    }
+
+    /* sezione cards */
+    .cards-section{ position:relative; max-width:100vw; margin:0 auto; padding:0 24px; z-index:5; overflow:visible; isolation:isolate;  padding-top: var(--headroom); }
+    .cards-strip{
+      position:relative;
+      z-index:6;
+      display:flex; 
+      align-items: flex-end;
+      gap:var(--card-gap);
+      overflow-x:auto; 
+      overflow-y:visible;
+      -ms-overflow-style: none; 
+      scrollbar-width: none;  
+      padding:0;
+      margin-top: calc( (var(--card-overlap) + var(--headroom)) * -1 );
+      scroll-snap-type:x mandatory;
+      scroll-padding-inline: var(--gutter);
+      -webkit-overflow-scrolling:touch;
+      min-height: var(--card-h-active);
+    }
+    .cards-strip::before,
+    .cards-strip::after{
+      content:"";
+      flex: 0 0 var(--gutter);
+    }
+    .cards-strip::-webkit-scrollbar{ width:0 !important; height:0 !important; }
+    .cards-strip::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.2); border-radius:99px }
+
+    .card{
+      position:relative;
+      flex:0 0 var(--card-w);
+      height:var(--card-h);
+      border-radius:var(--card-radius);
+      border:0px solid rgba(255,255,255,.08);
+      background: linear-gradient(135deg, #2121214b 0%, #b2b2b23c 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color:#f1f1f1;
+      box-shadow:0 10px 30px rgba(0,0,0,.22);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      scroll-snap-align:center;
+      transform-origin:bottom center;
+      opacity:1;
+      transform: none;
+      transition:
+        background var(--card-ease),
+        color var(--card-ease),
+        border-color var(--card-ease),
+        box-shadow var(--card-ease),
+        transform var(--card-ease),
+        opacity var(--card-ease),
+        height var(--card-easefast);
+    }
+    .card.active{
+      height:var(--card-h-active);
+      background:#ffffff;
+      color:#0a0a0a;
+      border-color:#ffffff;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      transform:none;
+      opacity:1;
+      z-index:20;
+    }
+
+    .card:not(.active):hover{
+      background: linear-gradient(135deg, #3c3c3c4e 0%, #c7c7c748 100%);
+      opacity:1;
+    }
+
+    .card .inner{
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+
+      border:0px solid rgba(255,255,255,.08);
+      border-radius: var(--card-radius);
+      box-shadow:0 10px 30px rgba(0,0,0,.22);
+      transform-origin: bottom center;
+      transform: none;
+      transition:
+        transform var(--card-ease),
+        background var(--card-ease),
+        color var(--card-ease),
+        border-color var(--card-ease),
+        box-shadow var(--card-ease),
+        opacity var(--card-ease);
+    }
+
+    .card:not(.active):hover { opacity:1; }
+
+    .cards-dots{
+      position: relative;
+      z-index: 7;
+      display:flex; 
+      justify-content:center; 
+      align-items:center; 
+      gap:10px; 
+      padding:14px 0 6px;
+    }
+    .cards-dots .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:rgba(255,255,255,.45);
+      border:0; cursor:pointer; 
+      transition:transform .25s, background .25s, opacity .25s;
+    }
+    .cards-dots .dot.active{ background:#fff; transform:scale(1.00); }
+
+    .card .card-body{
+      width: 88%;
+      max-width: 500px;
+      margin: 0px auto 50px;
+      color: #0a0a0a;
+    }
+
+    .card .c-head{
+      text-align:center;
+      margin-bottom: 14px;
+      margin-top: 0px;
+    }
+
+    @media (max-width: 720px){
+      .card .c-head{
+        margin-bottom: 0px;
+      }
+    }
+
+    .card .c-brand{
+      height: 50px; 
+      width: auto;
+      object-fit: contain;
+      margin-top: 50px;
+      filter: none; 
+    }
+
+    .card .c-title{
+      font-size: 18px;
+      font-weight: 800;
+      color : #000000;
+      margin-top: 8px;
+    }
+
+    .card .c-specs{
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 24px;
+      align-items: center;
+      margin: 8px 0 8px;
+    }
+    .card .spec-grid{
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 20px 22px;
+    }
+
+    @media (max-width: 720px){
+      .card .spec-grid{
+      grid-template-columns: repeat(2, 1fr);
+      gap : 0px 0px;
+      }
+    }
+
+    .card .spec{
+      text-align:center;
+    }
+    .card .spec .label{
+      font-size: 12px;
+      opacity: .6;
+      margin-top: 2px;
+    }
+    .card .spec .value{
+      font-size: 15px;
+      font-weight: 550;
+      letter-spacing: 0em;
+    }
+
+    .card .spec-logo{
+      width: 200px; height: auto; 
+      border-radius: 0px;
+      background: #f5f5f500;
+      display:flex; align-items:center; justify-content:center;
+      overflow: hidden;
+    }
+    .card .spec-logo img{
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .card .c-tech{
+      margin: 16px 0 18px;
+      text-align:center;
+    }
+
+    @media (max-width: 420px){
+      .card .c-tech{
+        margin: 0px 0 0px;
+      }
+    }
+
+    .card .c-tech h4{
+      font-size: 15px; margin-bottom: 1px;
+    }
+    .card .kv{
+      margin-top: 8px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 8px 0px;
+    }
+    .card .kv .row{
+      background: #ffffff29;
+      border-radius: 16px;
+      padding: 6px 6px;
+      display:flex; align-items:center; justify-content:space-between;
+      font-size: 12px;
+      transition-duration: 0.0s !important;
+    }
+    .card.active .kv .row{
+      background: #f1f1f1;
+      transition-duration: 2s !important;
+    }
+    .card .kv .k{ opacity:.7; text-align: left; margin-right: 30px;}
+    .card .kv .v{ font-weight:500; text-align:right; }
+
+    .card .layers{
+      --layers: 1;
+      height: 0px;
+      display:grid;
+      grid-template-columns: repeat(var(--layers), minmax(0, 1fr));
+      width: 100%;
+      border-radius: 4px;
+      overflow:hidden;
+      transition-duration: 0.6s;
+      margin-top: 12px;
+    }
+    .card.active .layers {
+      height: 46px;
+      border: 1px solid rgb(0, 0, 0);
+      transition-duration: 0.6s;
+    }
+    .card .layer{
+      position:relative;
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 600;
+      letter-spacing:0em;
+      font-size: 10px;
+      color:#000000;
+      background: var(--layer-color, #ddd);
+    }
+    .card .layer + .layer::before{
+      content:"";
+      position:absolute; left:0; top:0%; bottom:0%;
+      width: 1px; background: rgb(0, 0, 0);
+    }
+    .card .layer .name{
+      position:absolute; bottom:6px; left:8px; right:8px;
+      font-size: 11px; font-weight:600; opacity:.9; text-align:center;
+      pointer-events:none;
+    }
+
+    .card, .card .inner, .card .layer{
+      transition-duration: 1.2s ;
+    }
+
+    @media (max-width: 900px){ :root{ --card-w: 360px; } }
+    @media (max-width: 640px){ :root{ --card-w: 60vw; } }
+
+    @media (max-width: 1024px){ .cards-grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px){ :root{ --card-h: 200px; } .cards-grid{ grid-template-columns: 1fr; } }
+
+    .stage .heroImg{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+      will-change:transform,opacity; transform-origin:center top;
+      transform: translateY(var(--ty)) scale(var(--scale));
+      opacity:0; 
+      transition:opacity 2s ease;
+    }
+    .stage .heroImg.show{ opacity:1; }
+
+
+
+    /* ===================== MOBILE PORTRAIT — SOLO CORPO ===================== */
+@media (max-width: 480px) and (orientation: portrait){
+
+  /* 1) Layout generale: evita che main spacchi il layout su mobile */
+  main{
+    max-width: 100%;
+    margin: 56px auto;      /* lascia respirare senza esagerare */
+    padding: 0 16px;
+    line-height: 1.55;
+  }
+
+  /* 2) Hero/stage: centra e riduci l’effetto “croppato” in verticale */
+  .hero-block{ height: 90vh; }
+
+  .stage{
+    height: 90vh;
+  }
+
+  .stage img,
+  .stage .heroImg{
+    object-position: center center; /* invece di “right” o “top” */
+    transform: translateY(var(--ty)) scale(1); /* stop scalata aggressiva */
+  }
+
+  /* 3) Sezione cards: riduci overlap/altezza e rende swipe più pulito */
+  :root{
+    --card-w: 88vw;
+    --card-h: 220px;
+    --card-h-active: 320px;
+    --card-gap: 14px;
+    --card-overlap: 0px; /* niente overlap in verticale: è quello che sballa */
+    --headroom: 0px;
+  }
+
+  .cards-section{
+    padding: 0 14px;
+    padding-top: 16px; /* invece di headroom calcolato */
+  }
+
+  .cards-strip{
+    margin-top: 0; /* annulla il margin negativo dell’overlap */
+    max-height: var(--card-h-active);
+    gap: var(--card-gap);
+    scroll-snap-type: x mandatory;
+  }
+
+  /* 4) Contenuto card: compatta senza rovinare lo stile */
+  .card .card-body{
+    width: 90%;
+    margin: 0 auto 18px;
+  }
+
+  .card .c-brand{
+    height: 40px;
+    margin-top: 26px;
+  }
+
+  .card .c-title{
+    font-size: 16px;
+  }
+
+  .card .c-specs{
+    grid-template-columns: 1fr; /* da 2 colonne a 1 */
+    gap: 0px;
+  }
+
+  .card .spec-logo{
+    width: 140px;
+    margin: 0 auto;
+  }
+
+  .card .kv .row{
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .card.active .layers{
+    height: 38px;
+  }
+
+  /* 5) Performance: su mobile il blur può pesare (opzionale ma consigliato) */
+  .card{
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ===================== CARDS: FIX MOBILE < 640px ===================== */
+
+@media (max-width: 640px){
+
+  :root{
+    /* stessa altezza, così non “saltano” */
+    --card-h: 480px;
+    --card-h-active: 480px;
+
+    /* overlap ATTIVO come desktop */
+    --card-overlap: calc(var(--card-h) * 0.5);
+
+    /* su mobile lo mettiamo a 0 perché active non cambia altezza */
+    --headroom: 0px;
+
+    /* larghezza card */
+    --card-w: 86vw;
+  }
+
+  /* NON far “cadere” la strip sotto */
+  .cards-strip{
+    margin-top: calc( (var(--card-overlap) + var(--headroom)) * -1 );
+    min-height: var(--card-h);
+    overflow-x: auto;
+    overflow-y: hidden;
+
+
+  }
+
+  /* altezza bloccata anche in active */
+  .card,
+  .card.active{
+    height: var(--card-h);
+    overflow: hidden;
+  }
+}
+
+
+

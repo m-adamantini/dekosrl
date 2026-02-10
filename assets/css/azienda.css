@@ -1,0 +1,717 @@
+/* HERO */
+.about-hero{
+  min-height: 72vh;
+  display: grid;
+  align-items: center;
+  padding: calc(var(--pad) * 1.2) var(--pad);
+}
+.hero-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+  width: 100%;
+}
+.hero-title{
+  width: min(520px, 100%);
+}
+.hero-kicker{
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 18px 0;
+}
+.hero-stacked{
+  margin: 0;
+  font-size: clamp(32px, 6vw, 66px);
+  line-height: 1.2;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.hero-stacked span{
+  display:block;
+  color: var(--accent);
+}
+.hero-sub{
+  margin: 18px 0 0 0;
+  color: var(--muted);
+  max-width: 44ch;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* HERO with video on the right */
+/* HERO full-bleed video */
+.about-hero.about-hero--video{
+  position: relative;
+  min-height: 72vh;
+  padding-right: 20vw;
+  overflow: hidden;
+}
+
+/* video dietro */
+.about-hero__video{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+/* overlay: nero 100% a sinistra -> 0% a destra */
+.about-hero__overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  /* 2 layer: uno “hard” a sinistra + uno leggero generale */
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgb(0, 0, 0) 30%,
+      rgba(0, 0, 0, 0.753) 50%,
+      rgba(0,0,0,0) 75%
+    ),
+    linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* contenuto sopra */
+.about-hero__content{
+  position: relative;
+  z-index: 2;
+
+  max-width: var(--max);
+  margin: 0 auto;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+
+
+  padding-right: 30vw;
+}
+
+/* testo: limita la larghezza come nel riferimento */
+.about-hero__content .hero-title{
+  width: min(520px, 92vw);
+}
+
+.about-hero__image__content{
+  position: relative;
+  z-index: 2;
+
+  max-width: var(--max);
+  margin: 0 auto;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+
+
+  padding-right: 30vw;
+}
+
+/* testo: limita la larghezza come nel riferimento */
+.about-hero__image__content .hero-title{
+  width: min(520px, 92vw);
+}
+
+
+
+/* SPLIT */
+.about-split{
+  padding: var(--pad);
+}
+.split-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr 1.25fr;
+  gap: clamp(22px, 4vw, 56px);
+  align-items: center;
+}
+.split-eyebrow{
+  margin: 0 0 14px 0;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .26em;
+  font-size: 12px;
+}
+.split-title{
+  margin: 0 0 18px 0;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.split-par{
+  margin: 0 0 14px 0;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 60ch;
+  font-size: 14px;
+}
+.split-cta{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  opacity: .92;
+}
+.split-cta:hover{ opacity: 1; }
+
+.split-media{
+  margin: 0;
+  overflow: hidden;
+  background: rgba(255,255,255,.04);
+  border: 0px solid rgba(255,255,255,.08);
+}
+.split-media img{
+  width: auto;
+  height: 60vh;
+  display:block;
+}
+
+/* CALLOUT (white band) */
+.about-callout{
+  background: var(--panel2);
+  color: var(--panelText);
+  padding: clamp(42px, 6vw, 80px) var(--pad);
+}
+.callout-inner{
+  max-width: 980px;
+  margin: 0 auto;
+  text-align: center;
+}
+.callout-title{
+  margin: 0;
+  font-size: clamp(26px, 3.2vw, 42px);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.callout-sub{
+  margin: 12px 0 0 0;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: 12px;
+  opacity: .75;
+}
+.callout-body{
+  margin: 26px auto 0 auto;
+  max-width: 78ch;
+  line-height: 1.9;
+  font-size: 14px;
+  opacity: .88;
+}
+.callout-btn{
+  margin-top: 26px;
+  display: inline-block;
+  padding: 12px 18px;
+  border: 1px solid rgba(0,0,0,.22);
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--panelText);
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.callout-btn:hover{
+  border-color: rgba(0,0,0,.5);
+}
+
+/* Callout dark (come Missione, ma nero + testo bianco) */
+.about-callout--dark{
+  background: var(--bg);
+  color: var(--text);
+}
+.about-callout--dark .callout-title,
+.about-callout--dark .callout-sub,
+.about-callout--dark .callout-body{
+  color: var(--text);
+}
+.about-callout--dark .callout-body{
+  opacity: .82; /* come il bianco ma sul nero */
+}
+
+/* WIDE HERO */
+.about-wide{
+  padding: var(--pad);
+}
+.wide-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-height: clamp(420px, 56vh, 620px);
+  border: 1px solid rgba(255,255,255,.10);
+}
+.wide-bg{
+  position:absolute;
+  inset:0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.02);
+}
+.wide-overlay{
+  position: relative;
+  z-index: 1;
+  width: min(540px, 92%);
+  height: 100%;
+  padding: clamp(26px, 4vw, 46px);
+  background: linear-gradient(90deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,0) 100%);
+}
+.wide-eyebrow{
+  margin: 0 0 14px 0;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .26em;
+  font-size: 12px;
+}
+.wide-title{
+  margin: 0 0 18px 0;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.wide-par{
+  margin: 0 0 14px 0;
+  color: var(--muted);
+  line-height: 1.85;
+  font-size: 14px;
+  max-width: 62ch;
+}
+
+/* TIMELINE */
+.about-timeline{
+  padding: calc(var(--pad) * 1.2) var(--pad);
+}
+.timeline-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+}
+.timeline-title{
+  text-align: center;
+  margin: 0 0 34px 0;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.timeline-block{
+  padding: 26px 0;
+  border-top: 1px solid var(--line);
+}
+.timeline-decade{
+  text-align: center;
+  color: var(--accent);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+.timeline-rows{
+  display: grid;
+  gap: 14px;
+}
+.timeline-row{
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 22px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.timeline-row:first-child{
+  border-top: 0;
+}
+.timeline-year{
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: .14em;
+}
+.timeline-text{
+  color: var(--text);
+  opacity: .92;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .split-inner{
+    grid-template-columns: 1fr;
+  }
+  .wide-overlay{
+    width: 100%;
+    background: linear-gradient(0deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,0) 100%);
+  }
+  .timeline-row{
+    grid-template-columns: 64px 1fr;
+  }
+}
+
+
+/* --- ABOUT: new sections add-on --- */
+
+.about-split--reverse .split-inner{
+  direction: rtl;
+}
+.about-split--reverse .split-text,
+.about-split--reverse .split-media{
+  direction: ltr;
+}
+
+/* Divisions */
+.about-divisions{
+  padding: var(--pad);
+}
+.divisions-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+}
+.divisions-head{
+  margin-bottom: 18px;
+}
+.divisions-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.division-card{
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  padding: clamp(18px, 3vw, 26px);
+}
+.division-title{
+  margin: 0 0 12px 0;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 14px;
+}
+.division-text{
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+/* Principles grid */
+.about-principles{
+  padding: calc(var(--pad) * 1.2) var(--pad);
+}
+.principles-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+}
+.principles-head{
+  margin-bottom: 22px;
+}
+.principles-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+@media (max-width: 900px){
+  .principles-grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px){
+  .principles-grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+.principle{
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  padding: clamp(18px, 3vw, 26px);
+}
+.principle-n{
+  color: var(--accent);
+  font-size: 12px;
+  letter-spacing: .22em;
+  margin-bottom: 12px;
+}
+.principle-t{
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-weight: 500;
+  font-size: 14px;
+}
+.principle-p{
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+/* Commitments (list) */
+.about-commitments{
+  padding: calc(var(--pad) * 1.1) var(--pad);
+}
+.commitments-inner{
+  max-width: var(--max);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: clamp(22px, 4vw, 56px);
+  align-items: start;
+}
+
+.commitments-content{
+  padding-top: 6px;
+}
+
+/* Titolo come riferimento (più “hero”) */
+.commitments-head .split-title{
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: .14em;
+}
+
+/* Blocchi testo più “puliti” come screenshot */
+.commitments-list{
+  margin-top: 18px;
+  display: grid;
+  gap: 22px;
+}
+
+.commit{
+  padding: 0;
+  border-top: 0;
+}
+
+.commit-t{
+  margin: 0 0 10px 0;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.commit-p{
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.85;
+  font-size: 14px;
+  max-width: 90ch;
+}
+
+/* Immagine grande a destra */
+.commitments-media{
+  margin: 0;
+  overflow: hidden;
+  background: rgba(255,255,255,.04);
+  border: 0px solid rgba(255,255,255,.10);
+}
+
+.commitments-media img{
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Mobile: immagine sotto */
+@media (max-width: 900px){
+  .commitments-inner{ grid-template-columns: 1fr; }
+}
+
+
+/* ===== STORIA: hero full-bleed con immagine ===== */
+
+.about-hero--image{
+  position: relative;
+  min-height: 72vh;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* background image */
+.about-hero__bg{
+  position: absolute;
+  inset: 0;
+  margin-left: 20vw;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+/* overlay già usato nel video hero → riusato identico */
+.about-hero--image .about-hero__overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,1) 20%,
+      rgba(0,0,0,.9) 40%,
+      rgba(0, 0, 0, 0.50) 60%,
+      rgba(0,0,0,0) 75%
+    );
+}
+
+/* contenuto sovrapposto */
+.about-hero--image .about-hero__content{
+  position: relative;
+  z-index: 2;
+  min-height: 72vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-right: 40vw;
+}
+
+
+/* contenuto sovrapposto */
+.about-hero--image .about-hero__image__content{
+  position: relative;
+  z-index: 2;
+  min-height: 72vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-right: 40vw;
+}
+
+
+/* mobile */
+@media (max-width: 900px){
+  .about-hero--image{
+    min-height: 70vh;
+  }
+}
+
+
+
+
+@media (max-width: 1000px){
+
+
+    .about-hero__video{
+    object-position: 70% center;
+    /* 30% = più a sinistra
+       prova 25% / 35% se vuoi rifinire */
+  }
+
+
+
+  /* 2️⃣ Sposta il contenuto (CHI SIAMO) più in basso */
+  .about-hero__content{
+    align-items: flex-end;          /* invece di center */
+    padding-bottom: 182px;           /* quanto scende il testo */
+  }
+
+    /* 2️⃣ Sposta il contenuto (CHI SIAMO) più in basso */
+  .about-hero--image .about-hero__image__content{         /* invece di center */
+    padding-right: 30vw;
+  }
+}
+
+@media (max-width: 800px){
+  /* 2️⃣ Sposta il contenuto (CHI SIAMO) più in basso */
+  .about-hero--image .about-hero__image__content{         /* invece di center */
+    padding-right: 20vw;
+  }
+}
+
+@media (max-width: 700px){
+  /* 2️⃣ Sposta il contenuto (CHI SIAMO) più in basso */
+  .about-hero--image .about-hero__image__content{         /* invece di center */
+    padding-right: 8vw;
+  }
+}
+
+
+
+/* Telefoni piccoli: un filo più giù ancora */
+@media (max-width: 600px){
+
+  .about-hero__content{ height: auto; padding: 110px var(--pad) 56px; }
+  .about-hero__image__content{ height: auto; padding: 110px var(--pad) 56px; }
+  .about-hero.about-hero--video{ min-height: 70vh; }
+
+  .about-hero__overlay{
+    background:
+      linear-gradient(0deg,
+        rgba(0,0,0,.88) 0%,
+        rgba(0,0,0,.55) 45%,
+        rgba(0,0,0,0) 80%
+      );
+  }
+
+    .about-hero--image .about-hero__content{
+    padding: 100px var(--pad) 44px;
+  }
+      .about-hero--image .about-hero__image__content{
+    padding: 100px var(--pad) 44px;
+  }
+
+  /* se vuoi il testo ancora più leggibile */
+  .hero-stacked{ font-size: clamp(28px, 9vw, 48px); }
+  .hero-sub{ font-size: 13px; letter-spacing: .06em; }
+
+    /* 1️⃣ Sposta il video verso sinistra */
+  .about-hero__video{
+    object-position: 75% center;
+    /* 30% = più a sinistra
+       prova 25% / 35% se vuoi rifinire */
+  }
+
+  .about-hero__content{
+    padding-bottom: 0px;
+    padding: 350px var(--pad) 44px;
+
+  }
+
+    .about-hero__image__content{
+    padding-bottom: 0px;
+    padding: 350px var(--pad) 44px;
+
+  }
+
+  /* overlay già usato nel video hero → riusato identico */
+.about-hero--image .about-hero__overlay{
+
+  background:
+    linear-gradient(90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 20%,
+      rgba(0, 0, 0, 0) 40%,
+      rgba(0, 0, 0, 0) 60%,
+      rgba(0,0,0,0) 75%
+    );
+}
+
+/* background image */
+.about-hero__bg{
+  margin-left: 0vw;
+}
+
+.split-par{
+  line-height: 1.4;
+  font-size: 14px;
+  text-shadow:
+  0 1px 2px rgba(0, 0, 0, 0.539),
+  0 0 6px rgba(0, 0, 0, 0.562);
+}
+
+}

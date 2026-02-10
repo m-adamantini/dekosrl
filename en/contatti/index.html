@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/header.css">
+  <link rel="stylesheet" href="/assets/css/footer.css">
+  <link rel="stylesheet" href="/assets/css/contatti.css">
+  <link rel="stylesheet" href="/assets/css/silktide-consent-manager.css">
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contacts – DEKO</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+
+</head>
+
+<body class="about-page">
+
+    <div id="site-header"></div>
+
+<!-- ===================== HERO ===================== -->
+<header class="page-hero" id="top">
+  <div class="page-hero__bg" aria-hidden="true"></div>
+  <div class="page-hero__overlay" aria-hidden="true"></div>
+
+  <div class="page-hero__inner">
+    <p class="hero-kicker">DEKO SRL</p>
+    <h1 class="hero-stacked">
+      <span> </span>
+      <span class="accent">CONTACTS</span>
+    </h1>
+    <p class="hero-sub">
+      Here you can find our direct channels.
+    </p>
+  </div>
+</header>
+
+<!-- ===================== CONTACTS + APPLICATION ===================== -->
+<section class="section" id="contatti">
+  <div class="section-inner">
+
+    <!-- Left column: contact info -->
+    <div>
+      <p class="split-eyebrow">WHERE WE ARE</p>
+      <h2 class="split-title">ADDRESS, PHONE, EMAIL</h2>
+      <p class="split-par">
+      </p>
+
+      <div class="contact-cards">
+        <div class="contact-card">
+          <h3>ADDRESS</h3>
+          <p>
+            Sp 126, VII Km 3<br/>
+            26856 Senna Lodigiana (LO) — Italy
+          </p>
+        </div>
+
+        <div class="contact-card">
+          <h3>PHONE</h3>
+          <p>
+            <a href="tel:+390377413190">+39 0377 413190</a><br/>
+            Mon–Wed • 08:00–17:30
+          </p>
+          <p>
+            Thu • 08:00–16:30
+          </p>
+          <p>
+            Fri • 08:00–12:30
+          </p>
+        </div>
+
+        <div class="contact-card">
+          <h3>EMAIL</h3>
+          <p>
+            General: <a href="mailto:customerservice@dekosrl.com">customerservice@dekosrl.com</a><br/>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: job application form -->
+    <div class="form-panel" id="candidatura">
+      <p class="split-eyebrow">CAREERS</p>
+      <h2 class="split-title">SUBMIT YOUR APPLICATION</h2>
+      <p class="split-par">
+        Fill in the fields, select the department and attach your CV.
+        We will get back to you as soon as possible.
+      </p>
+
+      <form id="jobForm" enctype="multipart/form-data">
+        <div class="form-grid">
+          <div>
+            <label for="nome">First name</label>
+            <input class="field" id="nome" name="nome" type="text" required autocomplete="given-name" />
+          </div>
+
+          <div>
+            <label for="cognome">Last name</label>
+            <input class="field" id="cognome" name="cognome" type="text" required autocomplete="family-name" />
+          </div>
+
+          <div>
+            <label for="email">Email</label>
+            <input class="field" id="email" name="email" type="email" required autocomplete="email" />
+          </div>
+
+          <div>
+            <label for="telefono">Phone</label>
+            <input class="field" id="telefono" name="telefono" type="tel" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label for="ruolo">Role / Department</label>
+          <select class="field" id="ruolo" name="ruolo" required>
+            <option value="" selected disabled>Select a department</option>
+            <option value="amministrazione">Administration</option>
+            <option value="produzione">Production</option>
+            <option value="laboratorio">Laboratory</option>
+            <option value="commerciale">Sales</option>
+            <option value="sede_estera">Application for foreign branch</option>
+          </select>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label for="messaggio">Message</label>
+          <textarea class="field" id="messaggio" name="messaggio" placeholder="Briefly tell us who you are and what you are looking for." required></textarea>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label for="cv">Curriculum Vitae (PDF, DOC, DOCX)</label>
+          <input class="field" id="cv" name="cv" type="file" accept=".pdf,.doc,.docx" required />
+          <div class="help">Max size: 10MB.</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">SUBMIT APPLICATION</button>
+          <button type="reset" class="btn btn-ghost">RESET</button>
+          <span class="form-status" id="jobStatus" aria-live="polite"></span>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</section>
+
+
+<div id="site-footer"></div>
+
+<script defer src="/assets/js/silktide-consent-manager.js"></script>
+<script defer src="/assets/js/consent-config.js"></script>
+<script defer src="/assets/js/main.js"></script>
+<script defer src="/assets/js/contatti.js"></script>
+
+
+</body>
+</html>
