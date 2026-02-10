@@ -8,7 +8,7 @@ jobForm.addEventListener('submit', async (e) => {
   try {
     const formData = new FormData(jobForm);
 
-    const res = await fetch('https://api.dekosrl.com/api/candidature/', {
+    const res = await fetch('https://dekosrl-backend.onrender.com/api/candidature/', {
       method: 'POST',
       body: formData,
     });
