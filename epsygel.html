@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Epsygel – DEKO</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <style>
+    
+    @font-face {
+       font-family: 'din-2014';
+        src: url('assets/fonts/din-2014.otf') format('opentype');
+         font-weight: 400;
+         font-style: normal;
+      }
+
+    :root{
+      --limit: 0px;   /* ~0.55 * vh in px, impostata da JS */
+      --scale: 1.15;  /* zoom iniziale (→ 1.00) */
+      --ty: 0px;      /* offset verticale opzionale */
+      --h: 100vh;     /* altezza hero, aggiornata da JS */
+      --min: 90vh;    /* altezza finale desiderata */
+      --header-h:100px;
+      --bg:#0b0b0b;
+      --text:#f5f5f5;
+      --muted:#cfcfcf;
+      --accent:#ff0000;      /* rosso primario */
+      --accent-2:#ff0000;    /* hover rosso */
+      --panel:#ff0000;       /* pannello menu */
+
+      /* ✅ aggiunta: ti serve per l’hover del burger */
+      --hover-gray:rgba(255, 255, 255, 0.651);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'din-2014', sans-serif;background:#000000;color:#fff;}
+
+    /* ===================== HEADER + MENU (STANDARD) ===================== */
+    .site-header{
+      position:fixed; inset:0 0 auto 0; height:var(--header-h);
+      display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+      padding:0 18px; z-index:10;
+      background:transparent;
+      border-bottom:0 solid rgba(255,255,255,.06);
+      transition:background .25s ease, transform .25s ease;
+    }
+    .site-header.scrolled{ background:rgba(0,0,0,.88); border-bottom-color:rgba(255,255,255,.08) }
+    .site-header.hidden{ transform:translateY(-100%) }
+
+    .logo{ justify-self:center; display:inline-flex; align-items:center; text-decoration:none; color:var(--text) }
+    .logo img{ height:80px; width:auto; display:block }
+
+    .header-right{ justify-self:end; position:relative }
+
+    .menu-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:40px; height:40px; background:transparent; border:none; cursor:pointer; color:var(--text);
+      transition:color .2s ease;
+    }
+    .menu-icon{ position:relative; width:22px; height:14px }
+    .menu-icon span{
+      position:absolute; left:0; height:2px; background:currentColor; border-radius:2px; transition:background .2s ease
+    }
+    .menu-btn:hover .menu-icon span{ background:var(--hover-gray) }
+    .menu-icon span:nth-child(1){ top:0;  width:22px }
+    .menu-icon span:nth-child(2){ top:6px; width:18px }
+    .menu-icon span:nth-child(3){ top:12px; width:14px }
+
+    .menu-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.55);
+      opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:19;
+    }
+    .menu-backdrop.open{ opacity:1; pointer-events:auto }
+
+    .menu-panel{
+      position:fixed; top:0; right:0; height:100vh;
+      width:clamp(820px, 45vw, 960px);
+      background:var(--panel); color:#111; z-index:20;
+      transform:translateX(100%); transition:transform .3s ease;
+    }
+    .menu-panel.open{ transform:translateX(0) }
+    .menu-panel__inner{ padding:28px 28px 24px 32px; display:flex; flex-direction:column; height:100% }
+
+    .menu-close{
+      margin-left:auto; width:45px; height:45px; background:transparent; border:none; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; color:#111; transition:color .2s ease;
+    }
+    .menu-close:hover svg{ stroke:rgb(255, 255, 255) }
+    .menu-list{ display:grid; gap:10px; margin:24px 0 0; padding:0; list-style:none }
+    .menu-list a{ display:block; padding:10px 6px; text-decoration:none; color:#111; font-weight:700; letter-spacing:.02em; font-size:1.2rem; }
+    .menu-list a:hover{ opacity:1 ; color: white}
+    .menu-foot{ margin-top:auto; display:flex; align-items:center; justify-content:space-between; font-size:0.95rem }
+
+    .menu-item.has-sub .menu-sub{
+      display: none;
+    }
+    .menu-item.has-sub.open .menu-sub{
+      display: grid;
+      gap: 6px;
+      list-style: none;
+      margin: 4px 0 8px;
+      padding: 0 0 0 14px;
+    }
+
+    .menu-subbtn{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+
+      padding:10px 6px;
+      background:transparent;
+      border:none;
+      cursor:pointer;
+
+      color:#111;
+      font-weight:700;
+      letter-spacing:.02em;
+      font-size:1.2rem;
+      text-align:left;
+    }
+    .menu-subbtn:hover{ color:#fff; }
+
+    .menu-subbtn .chev{
+      display:inline-flex;
+      transition: transform .2s ease;
+    }
+    .menu-item.has-sub.open .menu-subbtn .chev{ transform: rotate(180deg); }
+
+    .menu-sub a{
+      display:block;
+      padding:8px 6px;
+      font-size:1.02rem;
+      font-weight:700;
+      letter-spacing:.02em;
+      color: rgba(17,17,17,.92);
+      opacity:.95;
+    }
+    .menu-sub a:hover{ color:#fff; opacity:1; }
+
+    @media (max-width:960px){
+      .menu-panel{ width:100vw }
+    }
+
+    /* ===================== HERO (video) ===================== */
+    .hero-block { height: 100vh; position:relative; z-index:0;}
+    main { margin-top: calc(var(--limit) * -1); }
+
+    .stage{ position:sticky; top:0; height:var(--h); width:100%; overflow:hidden; background:#000; will-change:height; z-index:0;}
+    .stage img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; will-change:transform; transform-origin:center top; transform: translateY(var(--ty)) scale(var(--scale)); }
+
+    .stage::after{ display:none !important; }
+    .stage .heroImg{ position:absolute; z-index:0; transition:opacity 2s ease;}
+    
+    main{max-width:960px; margin:80px auto; padding:0 20px; line-height:1.6;}
+
+    :root{
+      --card-h: 480px;
+      --card-h-active: 530px;
+      --card-w: 380px;
+      --card-gap: 23px;
+      --card-overlap: calc(var(--card-h) * 0.5);
+      --card-radius: 2px;
+      --card-ease: 0.9s cubic-bezier(.65,0,.35,1);
+      --card-easefast: .25s cubic-bezier(.2,.7,.2,1);
+      --card-easeslow: 1.8s cubic-bezier(.65,0,.35,1);
+      --card-easemid: 1.2s cubic-bezier(.25,.1,.25,1);
+      --gutter: 0px;
+      --lift: calc(var(--card-h) * 0.12);
+      --headroom: calc((var(--card-h-active) - var(--card-h)) * .60);
+    }
+
+    /* sezione cards */
+    .cards-section{ position:relative; max-width:100vw; margin:0 auto; padding:0 24px; z-index:5; overflow:visible; isolation:isolate;  padding-top: var(--headroom); }
+    .cards-strip{
+      position:relative;
+      z-index:6;
+      display:flex; 
+      align-items: flex-end;
+      gap:var(--card-gap);
+      overflow-x:auto; 
+      overflow-y:visible;
+      -ms-overflow-style: none; 
+      scrollbar-width: none;  
+      padding:0;
+      margin-top: calc( (var(--card-overlap) + var(--headroom)) * -1 );
+      scroll-snap-type:x mandatory;
+      scroll-padding-inline: var(--gutter);
+      -webkit-overflow-scrolling:touch;
+      min-height: var(--card-h-active);
+    }
+    .cards-strip::before,
+    .cards-strip::after{
+      content:"";
+      flex: 0 0 var(--gutter);
+    }
+    .cards-strip::-webkit-scrollbar{ width:0 !important; height:0 !important; }
+    .cards-strip::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.2); border-radius:99px }
+
+    .card{
+      position:relative;
+      flex:0 0 var(--card-w);
+      height:var(--card-h);
+      border-radius:var(--card-radius);
+      border:0px solid rgba(255,255,255,.08);
+      background: linear-gradient(135deg, #2121214b 0%, #b2b2b23c 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color:#f1f1f1;
+      box-shadow:0 10px 30px rgba(0,0,0,.22);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      scroll-snap-align:center;
+      transform-origin:bottom center;
+      opacity:1;
+      transform: none;
+      transition:
+        background var(--card-ease),
+        color var(--card-ease),
+        border-color var(--card-ease),
+        box-shadow var(--card-ease),
+        transform var(--card-ease),
+        opacity var(--card-ease),
+        height var(--card-easefast);
+    }
+    .card.active{
+      height:var(--card-h-active);
+      background:#ffffff;
+      color:#0a0a0a;
+      border-color:#ffffff;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      transform:none;
+      opacity:1;
+      z-index:20;
+    }
+
+    .card:not(.active):hover{
+      background: linear-gradient(135deg, #3c3c3c4e 0%, #c7c7c748 100%);
+      opacity:1;
+    }
+
+    .card .inner{
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+
+      border:0px solid rgba(255,255,255,.08);
+      border-radius: var(--card-radius);
+      box-shadow:0 10px 30px rgba(0,0,0,.22);
+      transform-origin: bottom center;
+      transform: none;
+      transition:
+        transform var(--card-ease),
+        background var(--card-ease),
+        color var(--card-ease),
+        border-color var(--card-ease),
+        box-shadow var(--card-ease),
+        opacity var(--card-ease);
+    }
+
+    .card:not(.active):hover { opacity:1; }
+
+    .cards-dots{
+      position: relative;
+      z-index: 7;
+      display:flex; 
+      justify-content:center; 
+      align-items:center; 
+      gap:10px; 
+      padding:14px 0 6px;
+    }
+    .cards-dots .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:rgba(255,255,255,.45);
+      border:0; cursor:pointer; 
+      transition:transform .25s, background .25s, opacity .25s;
+    }
+    .cards-dots .dot.active{ background:#fff; transform:scale(1.00); }
+
+    .card .card-body{
+      width: 88%;
+      max-width: 500px;
+      margin: 0px auto 50px;
+      color: #0a0a0a;
+    }
+
+    .card .c-head{
+      text-align:center;
+      margin-bottom: 14px;
+      margin-top: 0px;
+    }
+
+    @media (max-width: 720px){
+      .card .c-head{
+        margin-bottom: 0px;
+      }
+    }
+
+    .card .c-brand{
+      height: 50px; 
+      width: auto;
+      object-fit: contain;
+      margin-top: 50px;
+      filter: none; 
+    }
+
+    .card .c-title{
+      font-size: 18px;
+      font-weight: 800;
+      color : #000000;
+      margin-top: 8px;
+    }
+
+    .card .c-specs{
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 24px;
+      align-items: center;
+      margin: 8px 0 8px;
+    }
+    .card .spec-grid{
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 20px 22px;
+    }
+
+    @media (max-width: 720px){
+      .card .spec-grid{
+      grid-template-columns: repeat(2, 1fr);
+      gap : 0px 0px;
+      }
+    }
+
+    .card .spec{
+      text-align:center;
+    }
+    .card .spec .label{
+      font-size: 12px;
+      opacity: .6;
+      margin-top: 2px;
+    }
+    .card .spec .value{
+      font-size: 15px;
+      font-weight: 550;
+      letter-spacing: 0em;
+    }
+
+    .card .spec-logo{
+      width: 200px; height: auto; 
+      border-radius: 0px;
+      background: #f5f5f500;
+      display:flex; align-items:center; justify-content:center;
+      overflow: hidden;
+    }
+    .card .spec-logo img{
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .card .c-tech{
+      margin: 16px 0 18px;
+      text-align:center;
+    }
+
+    @media (max-width: 420px){
+      .card .c-tech{
+        margin: 0px 0 0px;
+      }
+    }
+
+    .card .c-tech h4{
+      font-size: 15px; margin-bottom: 1px;
+    }
+    .card .kv{
+      margin-top: 8px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 8px 0px;
+    }
+    .card .kv .row{
+      background: #ffffff29;
+      border-radius: 16px;
+      padding: 6px 6px;
+      display:flex; align-items:center; justify-content:space-between;
+      font-size: 12px;
+      transition-duration: 0.0s !important;
+    }
+    .card.active .kv .row{
+      background: #f1f1f1;
+      transition-duration: 2s !important;
+    }
+    .card .kv .k{ opacity:.7; text-align: left; margin-right: 30px;}
+    .card .kv .v{ font-weight:500; text-align:right; }
+
+    .card .layers{
+      --layers: 1;
+      height: 0px;
+      display:grid;
+      grid-template-columns: repeat(var(--layers), minmax(0, 1fr));
+      width: 100%;
+      border-radius: 4px;
+      overflow:hidden;
+      transition-duration: 0.6s;
+      margin-top: 12px;
+    }
+    .card.active .layers {
+      height: 46px;
+      border: 1px solid rgb(0, 0, 0);
+      transition-duration: 0.6s;
+    }
+    .card .layer{
+      position:relative;
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 600;
+      letter-spacing:0em;
+      font-size: 10px;
+      color:#000000;
+      background: var(--layer-color, #ddd);
+    }
+    .card .layer + .layer::before{
+      content:"";
+      position:absolute; left:0; top:0%; bottom:0%;
+      width: 1px; background: rgb(0, 0, 0);
+    }
+    .card .layer .name{
+      position:absolute; bottom:6px; left:8px; right:8px;
+      font-size: 11px; font-weight:600; opacity:.9; text-align:center;
+      pointer-events:none;
+    }
+
+    .card, .card .inner, .card .layer{
+      transition-duration: 1.2s ;
+    }
+
+    @media (max-width: 900px){ :root{ --card-w: 360px; } }
+    @media (max-width: 640px){ :root{ --card-w: 60vw; } }
+
+    @media (max-width: 1024px){ .cards-grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px){ :root{ --card-h: 200px; } .cards-grid{ grid-template-columns: 1fr; } }
+
+    .stage .heroImg{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+      will-change:transform,opacity; transform-origin:center top;
+      transform: translateY(var(--ty)) scale(var(--scale));
+      opacity:0; 
+      transition:opacity 2s ease;
+    }
+    .stage .heroImg.show{ opacity:1; }
+
+
+
+    /* ===================== MOBILE PORTRAIT — SOLO CORPO ===================== */
+@media (max-width: 480px) and (orientation: portrait){
+
+  /* 1) Layout generale: evita che main spacchi il layout su mobile */
+  main{
+    max-width: 100%;
+    margin: 56px auto;      /* lascia respirare senza esagerare */
+    padding: 0 16px;
+    line-height: 1.55;
+  }
+
+  /* 2) Hero/stage: centra e riduci l’effetto “croppato” in verticale */
+  .hero-block{ height: 90vh; }
+
+  .stage{
+    height: 90vh;
+  }
+
+  .stage img,
+  .stage .heroImg{
+    object-position: center center; /* invece di “right” o “top” */
+    transform: translateY(var(--ty)) scale(1); /* stop scalata aggressiva */
+  }
+
+  /* 3) Sezione cards: riduci overlap/altezza e rende swipe più pulito */
+  :root{
+    --card-w: 88vw;
+    --card-h: 220px;
+    --card-h-active: 320px;
+    --card-gap: 14px;
+    --card-overlap: 0px; /* niente overlap in verticale: è quello che sballa */
+    --headroom: 0px;
+  }
+
+  .cards-section{
+    padding: 0 14px;
+    padding-top: 16px; /* invece di headroom calcolato */
+  }
+
+  .cards-strip{
+    margin-top: 0; /* annulla il margin negativo dell’overlap */
+    max-height: var(--card-h-active);
+    gap: var(--card-gap);
+    scroll-snap-type: x mandatory;
+  }
+
+  /* 4) Contenuto card: compatta senza rovinare lo stile */
+  .card .card-body{
+    width: 90%;
+    margin: 0 auto 18px;
+  }
+
+  .card .c-brand{
+    height: 40px;
+    margin-top: 26px;
+  }
+
+  .card .c-title{
+    font-size: 16px;
+  }
+
+  .card .c-specs{
+    grid-template-columns: 1fr; /* da 2 colonne a 1 */
+    gap: 0px;
+  }
+
+  .card .spec-logo{
+    width: 140px;
+    margin: 0 auto;
+  }
+
+  .card .kv .row{
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .card.active .layers{
+    height: 38px;
+  }
+
+  /* 5) Performance: su mobile il blur può pesare (opzionale ma consigliato) */
+  .card{
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ===================== CARDS: FIX MOBILE < 640px ===================== */
+
+@media (max-width: 640px){
+
+  :root{
+    /* stessa altezza, così non “saltano” */
+    --card-h: 480px;
+    --card-h-active: 480px;
+
+    /* overlap ATTIVO come desktop */
+    --card-overlap: calc(var(--card-h) * 0.5);
+
+    /* su mobile lo mettiamo a 0 perché active non cambia altezza */
+    --headroom: 0px;
+
+    /* larghezza card */
+    --card-w: 86vw;
+  }
+
+  /* NON far “cadere” la strip sotto */
+  .cards-strip{
+    margin-top: calc( (var(--card-overlap) + var(--headroom)) * -1 );
+    min-height: var(--card-h);
+    overflow-x: auto;
+    overflow-y: hidden;
+
+
+  }
+
+  /* altezza bloccata anche in active */
+  .card,
+  .card.active{
+    height: var(--card-h);
+    overflow: hidden;
+  }
+}
+
+
+
+
+
+
+
+
+    /* ===== FOOTER FULL SCREEN ===== */
+    .site-footer{ background:#000; color:var(--text); min-height:60vh; display:flex; }
+    .footer-wrap{
+      max-width:2200px; margin:0 auto; width:100%;
+      padding:72px min(4vw,32px) 28px;
+      display:grid;
+      grid-template-rows: auto auto auto 1fr auto;
+      row-gap: 40px;
+    }
+
+
+  @media (max-width: 640px){
+    .footer-wrap{
+      padding:0px min(0vw,0px) 0px;
+    }
+  }
+
+    /* Titolo grande (riusato nella CTA servizi) */
+    .footer-hero{ text-align:left; }
+    .footer-hero-title{
+      font-size: clamp(36px, 4.5vw, 60px);
+      letter-spacing:.08em;
+      font-weight:800;
+      margin:0 0 10px;
+    }
+    .footer-hero-title .brand{ color:var(--accent); }
+    .title-underline{
+      width:120px; height:4px; background:var(--accent);
+      margin-top:10px; border-radius:4px;
+    }
+
+    /* Servizi (riutilizzato nella CTA) */
+    .svc-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:60px;
+      padding:60px 0 40px;
+    }
+    .svc-item h3{ margin:.5rem 0 .5rem; font-size:1.15rem; letter-spacing:.03em }
+    .svc-item p{ color:var(--muted); margin:0 0 1rem }
+    .svc-link{ font-weight:700; border-bottom:0px solid rgba(255,255,255,.25); padding-bottom:2px; color: red;}
+    .svc-ico{ width:32px; height:32px; color:var(--accent); display:flex; align-items:center; justify-content:center; margin-bottom:4px }
+
+    /* Separatore con logo grande sopra la linea */
+    .footer-sep{ position:relative; height:350px; margin:12px 0 12px; }
+    .footer-sep .sep-line{
+      position:absolute; left:0; right:0; top:68px;
+      height:2px; background:rgb(255, 0, 0);
+    }
+    .footer-logo{
+      position:absolute; left:50%; top:40%; transform:translateX(-50%);
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#000; padding:10px 18px;
+      border:0px solid rgba(255,255,255,.18);
+      border-radius:999px;
+    }
+    .footer-logo img{ height:110px; width:auto; display:block }
+
+    /* Parte bassa */
+    .footer-main{
+      display:grid; grid-template-columns: minmax(280px, 1.2fr) 2fr; gap:64px; align-items:start; margin-top: 100px;
+    }
+
+
+    .nl-title{ font-size:clamp(28px,3.5vw,44px); line-height:1.05; margin:0 0 10px }
+    .nl-title span{ color:var(--accent) }
+    .newsletter p{ color:var(--muted); margin:0 0 16px }
+    .nl-form{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+    .nl-form input{
+      flex:1 1 260px; min-width:240px;
+      background:#0f0f0f; border:1px solid rgba(255,255,255,.18); color:#fff;
+      padding:12px 14px; border-radius:10px;
+    }
+    .nl-form .nl-msg{ display:block; margin-top:8px; color:var(--muted) }
+    .socials{ display:flex; gap:10px; margin-top:18px }
+    .sbtn{ width:36px; height:36px; border:1px solid rgba(255,255,255,.18); border-radius:999px; display:flex; align-items:center; justify-content:center; color:#fff }
+    .sbtn:hover{ border-color:var(--accent); color:var(--accent) }
+
+    .footer-cols{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px }
+    .footer-cols .col h4{ color:var(--accent); font-size:.95rem; letter-spacing:.1em; margin:0 0 8px }
+    .footer-cols .col ul{ list-style:none; margin:0; padding:0 }
+    .footer-cols .col li{ margin:.45rem 0 }
+    .footer-cols .col a{ color:#cfcfcf }
+    .footer-cols .col a:hover{ color:#fff }
+
+    /* Barra legale */
+    .legal{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:24px; border-top:1px solid rgba(255,255,255,.12) }
+    .legal-text{
+  font-size:.9rem;
+  color:#cfcfcf;
+  line-height:1.5;
+}
+
+.legal-text p{
+  margin:0;
+  text-decoration:none;
+}
+    .legal-links{ display:flex; gap:20px; list-style:none; margin: 0; padding:0 }
+    .legal-links a{ color:#cfcfcf; font-size:.9rem }
+    .country{ display:flex; align-items:center; gap:6px; color:#cfcfcf; font-size:.9rem }
+
+    /* Responsive footer */
+    @media (max-width: 1024px){
+      .svc-grid{ grid-template-columns:1fr; gap:40px; padding:40px 0 }
+      .footer-main{ grid-template-columns:1fr; gap:40px }
+      .footer-cols{ grid-template-columns:repeat(2,1fr) }
+      .footer-sep .sep-line{ top:72px }
+      .footer-logo img{ height:74px }
+    }
+    @media (max-width: 640px){
+
+      .footer-wrap{ padding-left:16px; padding-right:16px }
+      .footer-main{ margin-top: 20px; }
+    }
+
+    /* ===== LIGHTBOX NEWS ===== */
+.news-card img{ cursor: zoom-in; }
+
+.lightbox{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.85);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index: 99999;
+  padding: 24px;
+}
+.lightbox.open{ display:flex; }
+
+.lightbox img{
+  max-width: 96vw;
+  max-height: 92vh;
+  object-fit: contain;
+  cursor: zoom-out;
+}
+
+.lightbox .close{
+  position:absolute;
+  top: 14px; right: 14px;
+  width: 44px; height: 44px;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.footer-partners{
+  position:absolute;
+  left:50%;
+  top:90%;                  /* regola se vuoi più su/giù */
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:200px;                 /* “aria” tra i loghi */
+  width:90vw;   /* mantiene equidistanza */
+  padding:0 12px;
+  z-index:2;
+}
+
+.footer-partners img{
+  height:120px;              /* dimensione coerente */
+  width:auto;
+  opacity:.95;
+  filter:none;
+}
+
+.sbtn svg{
+  width:30px;
+  height:30px;
+  display:block;
+}
+
+@media (max-width: 1554px){
+  .footer-partners{
+    gap:100px;
+    justify-content:center;
+  }
+  .footer-partners img{ height:100px; }
+}
+
+@media (max-width: 1024px){
+  .footer-partners{
+    gap:50px;
+    justify-content:center;
+  }
+  .footer-partners img{ height:70px; }
+}
+
+
+@media (max-width: 640px){
+  .footer-partners{
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:22px 30px;
+    top:75%;
+  }
+   .footer-partners img{ height:50px; }
+}
+  </style>
+</head>
+
+
+
+
+<body>
+    <!-- ===================== HEADER ===================== -->
+  <header class="site-header" role="banner">
+    <div></div>
+    <a href="index.html" class="logo" aria-label="Homepage">
+      <img src="assets/logo.png" alt="Deko Vernici" />
+    </a>
+    <div class="header-right">
+      <button class="menu-btn" id="menuBtn" aria-label="Apri menu" aria-haspopup="true" aria-expanded="false" aria-controls="offcanvas">
+        <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+
+      <div class="menu-backdrop" id="backdrop" hidden></div>
+      <aside id="offcanvas" class="menu-panel" aria-hidden="true" role="dialog" aria-label="Menu principale">
+        <div class="menu-panel__inner">
+          <button class="menu-close" id="menuClose" aria-label="Chiudi">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+
+          <ul class="menu-list">
+            <li><a href="azienda.html">Azienda</a></li>
+
+            <li class="menu-item has-sub">
+              <button class="menu-subbtn" type="button" data-sub aria-expanded="false">
+                Applicazioni
+                <span class="chev" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                </span>
+              </button>
+
+              <ul class="menu-sub">
+                <li><a href="index.html#epsygel">Epsygel</a></li>
+                <li><a href="index.html#spruzzo">Applicazione a spruzzo</a></li>
+                <li><a href="index.html#rullo">Applicazione a rullo</a></li>
+                <li><a href="index.html#industry">Linea Industriale</a></li>
+              </ul>
+            </li>
+
+            <li class="menu-item has-sub">
+              <button class="menu-subbtn" type="button" data-sub aria-expanded="false">
+                Qualità e Ambiente
+                <span class="chev" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                </span>
+              </button>
+
+              <ul class="menu-sub">
+    <li><a href="assets/documents/PARTE-GENERALE-MOGC-231-03012026.pdf">Politiche - Parte Generale</a></li>
+    <li><a href="assets/documents/S52.01-Politica-Aziendale-rev-2-ITA.pdf">Politica Aziendale</a></li>
+    <li><a href="assets/documents/Codice-Etico-REV-2_Ita-Cerved.pdf">Politica Etica</a></li>
+    <li><a href="assets/documents/Certificato-ISO-9001-n.-10000512291-MSC-ACCREDIA-ITA-12-03-2025-ITA.pdf">Certificazione ISO-9001</a></li>
+    <li><a href="assets/documents/Cerificato-ISO-14001-n.-C704707-11-04-2025-ITA.pdf">Certificazione ISO-14001</a></li>
+              </ul>
+            </li>
+
+            <li><a href="contatti.html">Contatti</a></li>
+          </ul>
+
+          <div class="menu-foot">
+            <ul class="menu-list">
+              <li>
+                <a href="epsygel-en.html">English
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"/>
+                    <path d="M13 6l6 6-6 6"/>
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+
+
+  <div class="hero-block" id="heroBlock">
+    <header class="stage" id="stage" aria-label="Hero immagine">
+
+      <img id="heroImgA" class="heroImg show"
+           src="assets/Epsygel/epsy-pad-sito.png"
+           alt="Hero A" />
+      <img id="heroImgB" class="heroImg"
+           src="assets/Epsygel/epsy-pad-sito.png"
+           alt="Hero B" />
+      <img id="heroImgC" class="heroImg show"
+           src="assets/Epsygel/epsy-pad-sito.png"
+           alt="Hero C" />
+
+
+    </header>
+  </div>
+
+  <section class="cards-section" aria-label="Prodotti">
+  <div class="cards-strip" id="cardsStrip">
+
+<!-- 1 -->
+<article class="card active" data-bg="assets/Epsygel/epsy-pad-sito.png">
+  <div class="inner">
+      <div class="card-body">
+  <!-- Header: logo prodotto + nome -->
+  <div class="c-head">
+    <img class="c-brand" src="assets/Epsygel/epsy-etich.png" alt="Logo prodotto">
+    <h3 class="c-title">Epsygel Infinity</h3>
+  </div>
+
+  <!-- Metodi + tipo a sinistra, logo quadrato a destra -->
+  <div class="c-specs">
+    <div class="spec-grid">
+      <div class="spec">
+        <div class="value"> </div>
+        <div class="label"> </div>
+      </div>
+      <div class="spec">
+        <div class="value"> </div>
+        <div class="label"> </div>
+      </div>
+    </div>
+    <div class="spec-logo">
+      <img src="assets/Epsygel/PENTAGONO-EPSY-INF.png" alt="Marchio">
+    </div>
+  </div>
+
+  <!-- Caratteristiche tecniche -->
+  <div class="c-tech">
+    <h4>Caratteristiche tecniche</h4>
+    <div class="kv">
+      <div class="row"><span class="k">Surface</span>              <span class="v">Aluminium, stainless steel, alloy FDA regulated</span></div>
+      <div class="row"><span class="k">Surface preparation</span>  <span class="v">Mechanical sandblasting 2,5 to 3,5 m </span></div>
+      <div class="row"><span class="k">Dry film thickness</span>   <span class="v">35 - 45 μm </span></div>
+      <div class="row"><span class="k">Continuous use T°</span>    <span class="v">280° </span></div>
+    </div>
+  </div>
+
+  <!-- Barra strati (colori diversi + separatori) -->
+  <div class="layers" style="--layers:2">
+    <div class="layer" style="--layer-color:#d90404"><span></span>PRIMER<span class="name"></span></div>
+    <div class="layer" style="--layer-color:#fc0000"><span></span>TOP COAT<span class="name"></span></div>
+  </div>
+</div>
+  </div>
+</article>
+
+
+
+<!-- 2 -->
+<article class="card" data-bg="assets/Epsygel/epsy-pad-sito.png">
+  <div class="inner">
+      <div class="card-body">
+  <!-- Header: logo prodotto + nome -->
+  <div class="c-head">
+    <img class="c-brand" src="assets/Epsygel/epsy-etich.png" alt="Logo prodotto">
+    <h3 class="c-title">Epsygel Interior</h3>
+  </div>
+
+  <!-- Metodi + tipo a sinistra, logo quadrato a destra -->
+  <div class="c-specs">
+    <div class="spec-grid">
+      <div class="spec">
+        <div class="value"> </div>
+        <div class="label"> </div>
+      </div>
+      <div class="spec">
+        <div class="value"> </div>
+        <div class="label"> </div>
+      </div>
+    </div>
+    <div class="spec-logo">
+      <img src="assets/Epsygel/PENTAGONO-EPSY1.png" alt="Marchio">
+    </div>
+  </div>
+
+  <!-- Caratteristiche tecniche -->
+  <div class="c-tech">
+    <h4>Caratteristiche tecniche</h4>
+    <div class="kv">
+      <div class="row"><span class="k">Surface</span>              <span class="v">Aluminium, stainless steel, alloy FDA regulated</span></div>
+      <div class="row"><span class="k">Surface preparation</span>  <span class="v">Mechanical sandblasting 2,5 to 3,5 m </span></div>
+      <div class="row"><span class="k">Dry film thickness</span>   <span class="v">35 - 45 μm </span></div>
+      <div class="row"><span class="k">Continuous use T°</span>    <span class="v">280° </span></div>
+    </div>
+  </div>
+
+  <!-- Barra strati (colori diversi + separatori) -->
+  <div class="layers" style="--layers:2">
+    <div class="layer" style="--layer-color:#d90404"><span></span>PRIMER<span class="name"></span></div>
+    <div class="layer" style="--layer-color:#fc0000"><span></span>TOP COAT<span class="name"></span></div>
+  </div>
+</div>
+  </div>
+</article>
+
+
+
+
+<!-- 3 -->
+<article class="card" data-bg="assets/Epsygel/epsy-pad-sito.png">
+  <div class="inner">
+      <div class="card-body">
+  <!-- Header: logo prodotto + nome -->
+  <div class="c-head">
+    <img class="c-brand" src="assets/Epsygel/epsy-etich.png" alt="Logo prodotto">
+    <h3 class="c-title">Epsygel Exterior</h3>
+  </div>
+
+  <!-- Metodi + tipo a sinistra, logo quadrato a destra -->
+  <div class="c-specs">
+    <div class="spec-grid">
+      <div class="spec">
+        <div class="value"> </div>
+        <div class="label"> </div>
+      </div>
+      <div class="spec">
+        <div class="value"> </div>
+        <div class="label"> </div>
+      </div>
+    </div>
+    <div class="spec-logo">
+      <img src="assets/Epsygel/PENTAGONO-EPSY2.png" alt="Marchio">
+    </div>
+  </div>
+
+  <!-- Caratteristiche tecniche -->
+  <div class="c-tech">
+    <h4>Caratteristiche tecniche</h4>
+    <div class="kv">
+      <div class="row"><span class="k">Surface</span>              <span class="v">Aluminium, stainless steel, alloy FDA regulated</span></div>
+      <div class="row"><span class="k">Surface preparation</span>  <span class="v">Mechanical sandblasting 2,5 to 3,5 m </span></div>
+      <div class="row"><span class="k">Dry film thickness</span>   <span class="v">30 - 40 μm </span></div>
+      <div class="row"><span class="k">Continuous use T°</span>    <span class="v">350° </span></div>
+    </div>
+  </div>
+
+  <!-- Barra strati (colori diversi + separatori) -->
+  <div class="layers" style="--layers:2">
+    <div class="layer" style="--layer-color:#d90404"><span></span>PRIMER<span class="name"></span></div>
+    <div class="layer" style="--layer-color:#fc0000"><span></span>TOP COAT<span class="name"></span></div>
+  </div>
+  <p style="height:0.5vh"></p>
+  <div class="layers" style="--layers:1">
+    <div class="layer" style="--layer-color:#d90404"><span></span>1 COAT SYSTEM<span class="name"></span></div>
+  </div>
+</div>
+  </div>
+</article>
+
+
+  </div>
+  <div class="cards-dots" id="cardsDots"></div>
+</section>
+
+
+  <main>
+    <h2> </h2>
+    <p> </p>
+    <p style="height:0vh"></p>
+  </main>
+
+  <!-- ===================== SCRIPT PAGINA (INVARIATO + AUTO-ACTIVE SWIPE) ===================== -->
+<script>
+  const root = document.documentElement;
+  const heroBlock = document.getElementById('heroBlock');
+
+  function clamp(n,min,max){return Math.max(min, Math.min(max,n));}
+
+  function recalc(){
+    const vh = window.innerHeight;
+    const limit = Math.round(vh * 0.15);
+    root.style.setProperty('--limit', limit + 'px');
+    update(window.scrollY, limit, vh);
+  }
+
+  function update(scrollY, limit, vh){
+    const raw = clamp(scrollY / limit, 0, 1);
+    const ease = raw*raw*(3-2*raw);
+
+    const minStr = getComputedStyle(root).getPropertyValue('--min').trim();
+    const minPx = /vh$/.test(minStr) ? vh * (parseFloat(minStr)/100) : parseFloat(minStr);
+    const h = (1 - ease) * vh + ease * minPx;
+    root.style.setProperty('--h', h + 'px');
+
+    const scale = 1.15 - (1.15 - 1.0) * ease;
+    const ty = (-0.02 * vh) * ease;
+    root.style.setProperty('--scale', scale.toFixed(4));
+    root.style.setProperty('--ty', ty.toFixed(2) + 'px');
+  }
+
+  function onScroll(){
+    const vh = window.innerHeight;
+    const limit = parseFloat(getComputedStyle(root).getPropertyValue('--limit')) || Math.round(vh*0.15);
+    update(window.scrollY, limit, vh);
+  }
+
+  window.addEventListener('resize', recalc, {passive:true});
+  window.addEventListener('scroll', onScroll, {passive:true});
+  recalc();
+
+  (function(){
+    const imgA = document.getElementById('heroImgA');
+    const imgB = document.getElementById('heroImgB');
+    let onA = true;
+
+    function preload(src){
+      return new Promise((resolve, reject)=>{
+        const im = new Image();
+        im.onload = ()=>resolve(src);
+        im.onerror = reject;
+        im.src = src;
+      });
+    }
+
+    window.crossfadeTo = async function(src){
+      if(!src) return;
+      const visible = onA ? imgA : imgB;
+      if(visible.getAttribute('src') === src) return;
+
+      try{
+        await preload(src);
+        const next = onA ? imgB : imgA;
+        const cur  = onA ? imgA : imgB;
+
+        next.src = src;
+        next.classList.add('show');
+        cur.classList.remove('show');
+
+        onA = !onA;
+      }catch(e){
+        console.warn('Errore preload hero:', e);
+      }
+    };
+
+    window.addEventListener('load', ()=>{
+      const active = document.querySelector('.card.active');
+      const url = active?.getAttribute('data-bg');
+      if(url) { imgA.src = url; imgA.classList.add('show'); imgB.classList.remove('show'); }
+    });
+  })();
+
+  (function(){
+    const strip = document.getElementById('cardsStrip');
+    const dotsCtn = document.getElementById('cardsDots');
+    if(!strip || !dotsCtn) return;
+
+    const cards = Array.from(strip.querySelectorAll('.card'));
+    let dots = [];
+
+    function setGutter(){
+      const w = cards[0].getBoundingClientRect().width;
+      const g = Math.max(0, (window.innerWidth/2) - (w/2));
+      document.documentElement.style.setProperty('--gutter', g + 'px');
+    }
+
+    function updateDots(){
+      dots.forEach((d,i)=> d.classList.toggle('active', cards[i].classList.contains('active')));
+    }
+
+    function centerCard(el){
+      const r = el.getBoundingClientRect(), vw = window.innerWidth;
+      const target = strip.scrollLeft + (r.left - (vw/2 - r.width/2));
+      const max = strip.scrollWidth - strip.clientWidth;
+      strip.scrollTo({ left: Math.max(0, Math.min(target, max)), behavior: 'smooth' });
+    }
+
+    function setActive(card){
+      cards.forEach(c=>c.classList.remove('active'));
+      card.classList.add('active');
+      centerCard(card);
+      updateDots();
+      const url = card.getAttribute('data-bg');
+      if(url && typeof crossfadeTo === 'function') crossfadeTo(url);
+    }
+
+    function renderDots(){
+      dotsCtn.innerHTML = cards.map(()=>'<button class="dot" aria-hidden="true"></button>').join('');
+      dots = Array.from(dotsCtn.querySelectorAll('.dot'));
+      dots.forEach((dot,i)=> dot.addEventListener('click', ()=> setActive(cards[i])));
+      updateDots();
+    }
+
+    cards.forEach(c=> c.addEventListener('click', ()=> setActive(c)));
+
+    window.addEventListener('load', ()=>{
+      setGutter(); renderDots();
+      const cur = document.querySelector('.card.active') || cards[0];
+      if(cur) centerCard(cur);
+    });
+    window.addEventListener('resize', setGutter);
+
+    /* =========================================================
+       AUTO-ACTIVE DURANTE SWIPE / SCROLL ORIZZONTALE (MOBILE)
+       - Non rompe click/dots
+       - Non chiama centerCard mentre stai swipando
+       - Aggiorna dots + crossfade quando una card è centrata
+    ========================================================= */
+    let rafLock = false;
+    let lastAuto = null;
+
+    function nearestToCenter(){
+      const centerX = window.innerWidth / 2;
+      let best = null;
+      let bestDist = Infinity;
+
+      for(const c of cards){
+        const r = c.getBoundingClientRect();
+        const cardCenter = r.left + r.width / 2;
+        const dist = Math.abs(cardCenter - centerX);
+        if(dist < bestDist){
+          bestDist = dist;
+          best = c;
+        }
+      }
+      return best;
+    }
+
+    function autoSetActive(){
+      const best = nearestToCenter();
+      if(!best) return;
+
+      if(lastAuto === best) return;
+
+      // soglia: cambia solo se la card è abbastanza centrata
+      const r = best.getBoundingClientRect();
+      const dist = Math.abs((r.left + r.width/2) - (window.innerWidth/2));
+      if(dist > r.width * 0.35) return;
+
+      lastAuto = best;
+
+      // attiva senza "forzare" lo scroll (niente centerCard)
+      cards.forEach(c=>c.classList.remove('active'));
+      best.classList.add('active');
+      updateDots();
+
+      const url = best.getAttribute('data-bg');
+      if(url && typeof crossfadeTo === 'function') crossfadeTo(url);
+    }
+
+    strip.addEventListener('scroll', ()=>{
+      if(rafLock) return;
+      rafLock = true;
+      requestAnimationFrame(()=>{
+        rafLock = false;
+        autoSetActive();
+      });
+    }, { passive:true });
+
+    // quando finisci il gesto, ricalcola (snap finale)
+    strip.addEventListener('touchend', ()=> setTimeout(autoSetActive, 80), { passive:true });
+    strip.addEventListener('mouseup',  ()=> setTimeout(autoSetActive, 80), { passive:true });
+
+  })();
+
+  (function(){
+    function initLayers(scope=document){
+      const cards = scope.querySelectorAll('.card');
+      cards.forEach(card=>{
+        const layers = card.querySelector('.layers');
+        if(!layers) return;
+        const n = layers.querySelectorAll('.layer').length || 1;
+        layers.style.setProperty('--layers', n);
+      });
+    }
+    window.addEventListener('load', ()=> initLayers());
+  })();
+</script>
+
+
+  <!-- ===================== SCRIPT HEADER + MENU (STANDARD) ===================== -->
+  <script>
+    const btn = document.getElementById('menuBtn');
+    const panel = document.getElementById('offcanvas');
+    const closeBtn = document.getElementById('menuClose');
+    const backdrop = document.getElementById('backdrop');
+
+    document.querySelectorAll('[data-sub]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const li = btn.closest('.menu-item.has-sub');
+        const isOpen = li.classList.contains('open');
+
+        li.classList.toggle('open', !isOpen);
+        btn.setAttribute('aria-expanded', String(!isOpen));
+      });
+    });
+
+    function openMenu(){
+      panel.classList.add('open');
+      panel.setAttribute('aria-hidden','false');
+      btn.setAttribute('aria-expanded','true');
+      backdrop.classList.add('open');
+      backdrop.hidden = false;
+      document.body.style.overflow='hidden';
+    }
+
+    document.querySelectorAll('.menu-item.has-sub').forEach(li => {
+      li.classList.remove('open');
+      const b = li.querySelector('[data-sub]');
+      if(b) b.setAttribute('aria-expanded','false');
+    });
+
+    function closeMenu(){
+      panel.classList.remove('open');
+      panel.setAttribute('aria-hidden','true');
+      btn.setAttribute('aria-expanded','false');
+      backdrop.classList.remove('open');
+      setTimeout(()=>{backdrop.hidden = true;}, 250);
+      document.body.style.overflow='';
+    }
+
+    document.querySelectorAll('#offcanvas a[href]').forEach(a => {
+      a.addEventListener('click', () => {
+        document.querySelectorAll('.menu-item.has-sub.open').forEach(li => {
+          li.classList.remove('open');
+          const b = li.querySelector('[data-sub]');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        closeMenu();
+      });
+    });
+
+    btn.addEventListener('click', ()=> panel.classList.contains('open') ? closeMenu() : openMenu());
+    closeBtn.addEventListener('click', closeMenu);
+    backdrop.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
+
+    const header = document.querySelector('.site-header');
+    let lastY = window.scrollY, ticking = false;
+    function onScroll(){
+      const y = window.scrollY;
+      if(y > 4) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+      if(y > lastY && y > 120){ header.classList.add('hidden'); } else { header.classList.remove('hidden'); }
+      lastY = y; ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if(!ticking){ requestAnimationFrame(onScroll); ticking = true; }
+    }, {passive:true});
+  </script>
+
+
+  <!-- ===== FOOTER FULL SCREEN (parte DAL LOGO in giù) ===== -->
+  <footer class="site-footer" id="footer">
+    <div class="footer-wrap">
+      <!-- Separatore con logo grande SOPRA alla linea -->
+      <div class="footer-sep">
+        <span class="footer-logo">
+          <img src="assets/logo.png" alt="Deko Vernici">
+        </span>
+
+        <div class="footer-partners" aria-label="Partner">
+        <img src="assets/partners/logo1.png" alt="Partner 1">
+        <img src="assets/partners/logo2.png" alt="Partner 2">
+        <img src="assets/partners/logo3.png" alt="Partner 3">
+        <img src="assets/partners/logo4.jpg" alt="Partner 4">
+        </div>
+
+        <span class="sep-line" aria-hidden="true"></span>
+      </div>
+
+      <!-- Parte bassa: newsletter + colonne -->
+      <section class="footer-main">
+        <div class="newsletter">
+          <h3 class="nl-title"><span>NON PERDERE</span><br/>LE NOVITÀ</h3>
+          <p>Iscriviti alla newsletter per ricevere aggiornamenti su prodotti ed eventi.</p>
+          <form class="nl-form" id="nlForm">
+            <input type="email" required placeholder="La tua email" aria-label="Email" />
+            <button type="submit" class="btn btn-primary">TIENIMI INFORMATO</button>
+            <small class="nl-msg" aria-live="polite"></small>
+          </form>
+          <div class="socials" aria-label="Social">
+            <a href="https://www.instagram.com/deko.srl/" aria-label="Instagram" class="sbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.3"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>
+            </a>
+<a href="https://it.linkedin.com/company/deko-srl/" aria-label="LinkedIn" class="sbtn">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path fill="currentColor" d="M4.98 3.5c0 1.38-1.11 2.5-2.48 2.5S0 4.88 0 3.5 1.11 1 2.48 1c1.38 0 2.5 1.12 2.5 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V23h-4v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.77 1.87-2.77 3.8V23h-4V8.5z"/>
+  </svg>
+</a>
+            <a href="https://www.youtube.com/@dekononstick9061/featured/" aria-label="YouTube" class="sbtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.5a4 4 0 0 0-3-3C17.8 4 12 4 12 4s-5.8 0-8 .5a4 4 0 0 0-3 3A41 41 0 0 0 1 12a41 41 0 0 0 0 4.5 4 4 0 0 0 3 3c2.2.5 8 .5 8 .5s5.8 0 8-.5a4 4 0 0 0 3-3A41 41 0 0 0 23 12a41 41 0 0 0 0-4.5zM10 15V9l6 3-6 3z"/></svg>
+            </a>
+
+            
+          </div>
+        </div>
+
+        <nav class="footer-cols" aria-label="Link utili">
+          <div class="col">
+            <h4>APPLICAZIONI</h4>
+            <ul>
+              <li><a href="index.html#epsygel">Epsygel</a></li>
+              <li><a href="index.html#spruzzo">Applicazione a spruzzo</a></li>
+              <li><a href="index.html#rullo">Applicazione a rullo</a></li>
+              <li><a href="index.html#industry">Industriale</a></li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4>INFORMAZIONI</h4>
+            <ul>
+              <li><a href="azienda.html">Chi siamo</a></li>
+              <li><a href="contatti.html">Lavora con noi</a></li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4>SERVIZI</h4>
+            <ul>
+              <li><a href="https://www.deko-kustom.com/">Deko Kustom</a></li>
+              <li><a href="assets/documents/Cat-26.pdf">Download cataloghi</a></li>
+            </ul>
+          </div>
+        </nav>
+      </section>
+
+      <!-- Barra legale -->
+      <div class="legal">
+        <div class="legal-text">
+  <p>© 2026 - DEKO Srl - P.I. 04291320960 - C.F. 04291320960</p>
+  <p>Capitale sociale interamente versato 1.mil</p>
+  <p>REA MI - 1992102</p>
+</div>
+        <ul class="legal-links">
+          <li><a href="privacy_policy.html">Privacy Policy</a></li>
+          <li><a href="cookie_policy.html">Cookie Policy</a></li>
+        </ul>
+        <div class="country">
+          <ul class="legal-links">
+          <li><a href="epsygel-en.html">English<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 12h14"/>
+  <path d="M13 6l6 6-6 6"/>
+</svg></a></li>
+        </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+<link rel="stylesheet" href="css/silktide-consent-manager.css">
+<script src="js/silktide-consent-manager.js" defer></script>
+<script src="js/consent-config.js" defer></script>
+</body>
+</html>
