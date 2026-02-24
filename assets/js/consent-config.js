@@ -110,7 +110,7 @@
     text: {
       banner: {
         description:
-          "<p>We use necessary cookies to make the site work. With your consent, we also use analytics to improve performance. <a href=\"cookie_policy-en.html\">Cookie Policy</a>.</p>",
+          "<p>We use necessary cookies to make the site work. With your consent, we also use analytics to improve performance. <a href=\"cookie-policy\">Cookie Policy</a>.</p>",
         acceptAllButtonText: "Accept all",
         acceptAllButtonAccessibleLabel: "Accept all cookies",
         rejectNonEssentialButtonText: "Reject non-essential",
