@@ -2,39 +2,6 @@
 <html lang="it">
   <head>
     <!-- Google tag (gtag.js) -->
-    <!-- 1. DEFAULT CONSENT (FONDAMENTALE) -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("consent", "default", {
-        ad_storage: "denied",
-        ad_user_data: "denied",
-        ad_personalization: "denied",
-        analytics_storage: "denied",
-        functionality_storage: "denied",
-        personalization_storage: "denied",
-        security_storage: "granted",
-        wait_for_update: 500,
-      });
-    </script>
-
-    <!-- 2. CONFIGURAZIONE INTASTELLAR -->
-    <script>
-      window.INTA = {
-        policy_link: "https://www.dekosrl.com/cookie-policy/",
-        settings: {
-          rootDomain: "dekosrl.com", // IL TUO DOMINIO
-          logo: "", // OPZIONALE: link al tuo logo
-        },
-      };
-    </script>
-
-    <!-- 3. BANNER INTASTELLAR -->
-    <script src="https://consents.cdn.intastellarsolutions.com/uc.js"></script>
-
-    <!-- 4. IL TUO CODICE GA4 ESISTENTE -->
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-1P1TZ9YN6Y"
@@ -45,8 +12,10 @@
         dataLayer.push(arguments);
       }
       gtag("js", new Date());
+
       gtag("config", "G-1P1TZ9YN6Y");
     </script>
+
     <meta charset="utf-8" />
     <title>Redirect</title>
     <link rel="canonical" href="/en/" />
